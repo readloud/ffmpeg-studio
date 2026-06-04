@@ -47,8 +47,15 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #4f46e5;
         }
+		
+		@keyframes spin {
+			from { transform: rotate(0deg); }
+			to { transform: rotate(360deg); }
+		}
+		.animate-spin {
+		animation: spin 1s linear infinite;
+		}
     </style>
-    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 </head>
 <body class="bg-dark-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
 
@@ -506,9 +513,9 @@
     <video id="bg-video-element" loop muted crossOrigin="anonymous" class="hidden"></video>
 
     <script>
-        let audioContext = null, analyser = null, audioSource = null, audioBuffer = null, isPlaying = false;
-        let demoOscillatorInterval = null, startTime = 0, pausedAt = 0, duration = 0, demoOscillators = [], gainNode = null;
-        let mediaRecorder = null, recordedChunks = [], isRecording = false;
+        let audioContext = null, audioSource = null, analyser = null, gainNode = null; audioBuffer = null, isPlaying = false;
+        let demoOscillatorInterval = null, startTime = 0, pausedAt = 0, duration = 0, demoOscillators = [], animationFrameId = null;
+		let mediaRecorder = null, recordedChunks = [], isRecording = false;
 
         const audioUpload = document.getElementById('audio-upload'), uploadLabel = document.getElementById('upload-label');
         const fileInfo = document.getElementById('file-info'), fileName = document.getElementById('file-name'), fileSize = document.getElementById('file-size');
@@ -589,24 +596,27 @@
             contentEduForm.classList.remove('hidden'); contentMusicForm.classList.add('hidden');
         });
 
-        // Fungsi Update Terminal Command FFmpeg
-        function updateFfmpegTerminal() {
-            const res = paramResolution.value;
-            const mode = document.querySelector('.mode-btn.active').dataset.mode;
-            const color = paramColor.value.replace('#', '0x');
-            const pix = paramPixel.value;
-            const acodec = paramAudioCodec.value;
-            
-            // Menggunakan URL Blob dari upload jika ada, jika tidak gunakan fallback 'input.mp3'
-            const inputSource = window.uploadedAudioUrl || "input.mp3";
+        // Update fungsi updateFfmpegTerminal
+		function updateFfmpegTerminal() {
+			const res = paramResolution.value;
+			const mode = document.querySelector('.mode-btn.active').dataset.mode;
+			const color = paramColor.value.replace('#', '0x');
+			const pix = paramPixel.value;
+			const acodec = paramAudioCodec.value;
+			
+			// Gunakan nama file yang diupload
+			let inputSource = "input.mp3";
+			if (window.uploadedAudioFile) {
+				inputSource = `"${window.uploadedAudioFile.name}"`;
+			}
 
-            let filter = `[0:a]showwaves=s=${res}:mode=${mode}:colors=${color},format=${pix}[v]`;
-            if (mode === 'circular') {
-                filter = `[0:a]showwaves=s=${res}:mode=line:colors=${color},format=${pix},edgedetect[v]`;
-            }
-            
-            commandText.textContent = `ffmpeg -i "${inputSource}" -filter_complex "${filter}" -map "[v]" -map 0:a -c:v libx264 -c:a ${acodec} output.mp4`;
-        }
+			let filter = `[0:a]showwaves=s=${res}:mode=${mode}:colors=${color},format=${pix}[v]`;
+			if (mode === 'circular') {
+				filter = `[0:a]showwaves=s=${res}:mode=line:colors=${color},format=${pix},edgedetect[v]`;
+			}
+			
+			commandText.textContent = `ffmpeg -i ${inputSource} -filter_complex "${filter}" -map "[v]" -map 0:a -c:v libx264 -c:a ${acodec} output.mp4`;
+		}
 
         // Event listener untuk perubahan parameter yang memerlukan update terminal
         paramResolution.addEventListener('change', updateFfmpegTerminal);
@@ -620,41 +630,281 @@
             updateFfmpegTerminal();
         }));
 
-        // Event listener untuk upload audio dengan Vercel Blob
-        audioUpload.addEventListener('change', async (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
+        // Event listener untuk upload audio (versi lokal tanpa API)
+		audioUpload.addEventListener('change', async (event) => {
+			const file = event.target.files[0];
+			if (!file) return;
 
-            // Tampilkan status loading di UI
-            uploadLabel.textContent = "Mengunggah ke Cloud...";
-            
-            try {
-                // Mengunggah file ke API Route Vercel Blob
-                const response = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
-                    method: 'POST',
-                    body: file,
-                });
-                
-                if (!response.ok) throw new Error("Gagal mengupload file");
-                
-                const blob = await response.json();
-                
-                // Simpan URL Blob agar bisa diakses oleh FFmpeg
-                window.uploadedAudioUrl = blob.url; 
-                
-                // Update UI
-                fileInfo.classList.remove('hidden');
-                fileName.textContent = file.name;
-                fileSize.textContent = (file.size / (1024 * 1024)).toFixed(2) + " MB";
-                uploadLabel.textContent = "File berhasil diunggah!";
-                
-                // Update Terminal FFmpeg dengan URL Blob
-                updateFfmpegTerminal();
-            } catch (error) {
-                uploadLabel.textContent = "Gagal mengunggah!";
-                showCustomToast("Terjadi kesalahan saat upload ke Vercel Blob.");
-            }
-        });
+			// Validasi tipe file
+			const validExtensions = ['.mp3', '.wav', '.m4a', '.ogg', '.aac'];
+			const fileExt = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+			
+			if (!validExtensions.includes(fileExt)) {
+				showCustomToast("Tipe file tidak didukung. Gunakan: MP3, WAV, M4A, OGG, atau AAC", "error");
+				audioUpload.value = '';
+				return;
+			}
+
+			// Validasi ukuran (maks 50MB)
+			if (file.size > 50 * 1024 * 1024) {
+				showCustomToast("Ukuran file terlalu besar. Maksimal 50MB", "error");
+				audioUpload.value = '';
+				return;
+			}
+
+			// Tampilkan status loading
+			uploadLabel.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin inline mr-1"></i> Memproses audio...';
+			lucide.createIcons();
+			
+			try {
+				// Hentikan pemutaran yang sedang berjalan
+				if (isPlaying) {
+					stopPlayback();
+				}
+				
+				// Tutup AudioContext lama
+				if (audioContext) {
+					await audioContext.close();
+					audioContext = null;
+				}
+				
+				// Buat AudioContext baru (di-resume nanti saat user interaction)
+				audioContext = new (window.AudioContext || window.webkitAudioContext)();
+				analyser = audioContext.createAnalyser();
+				analyser.fftSize = 256;
+				gainNode = audioContext.createGain();
+				gainNode.gain.value = 0.5;
+				
+				// Baca file sebagai ArrayBuffer
+				const arrayBuffer = await file.arrayBuffer();
+				audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+				duration = audioBuffer.duration;
+				
+				// Simpan file info untuk FFmpeg command
+				window.uploadedAudioFile = file;
+				window.uploadedAudioUrl = URL.createObjectURL(file);
+				
+				// Update UI
+				fileInfo.classList.remove('hidden');
+				fileName.textContent = file.name;
+				fileSize.textContent = (file.size / (1024 * 1024)).toFixed(2) + " MB";
+				uploadLabel.innerHTML = '<i data-lucide="check-circle-2" class="w-4 h-4 inline mr-1"></i> Audio siap!';
+				lucide.createIcons();
+				
+				// Update time display
+				timeDisplay.textContent = `00:00 / ${formatTime(duration)}`;
+				playerStatus.textContent = "Audio Siap";
+				
+				// Update Terminal FFmpeg
+				updateFfmpegTerminal();
+				
+				// Sembunyikan overlay play
+				playOverlay.style.display = 'flex';
+				
+				showCustomToast(`"${file.name}" berhasil dimuat!`, "success");
+				
+			} catch (error) {
+				console.error("Error loading audio:", error);
+				uploadLabel.textContent = "Gagal memuat file!";
+				showCustomToast("Gagal memuat file audio. Pastikan file tidak corrupt.", "error");
+				audioUpload.value = '';
+				fileInfo.classList.add('hidden');
+			} finally {
+				setTimeout(() => {
+					if (uploadLabel.innerHTML.includes('Memproses')) {
+						uploadLabel.innerHTML = '<i data-lucide="upload-cloud" class="w-4 h-4 inline mr-1"></i> Unggah file audio';
+						lucide.createIcons();
+					}
+				}, 2000);
+			}
+		});
+
+		// Fungsi format waktu
+		function formatTime(seconds) {
+			if (isNaN(seconds) || !isFinite(seconds)) return "00:00";
+			const mins = Math.floor(seconds / 60);
+			const secs = Math.floor(seconds % 60);
+			return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+		}
+
+		// Fungsi memulai playback
+		async function startPlayback() {
+			if (!audioBuffer || !audioContext) {
+				showCustomToast("Silakan upload file audio terlebih dahulu", "error");
+				return false;
+			}
+			
+			try {
+				// Resume AudioContext jika suspended (karena kebijakan browser)
+				if (audioContext.state === 'suspended') {
+					await audioContext.resume();
+				}
+				
+				// Buat source baru
+				audioSource = audioContext.createBufferSource();
+				audioSource.buffer = audioBuffer;
+				audioSource.connect(analyser);
+				analyser.connect(gainNode);
+				gainNode.connect(audioContext.destination);
+				
+				// Mulai dari posisi paused
+				const offset = pausedAt || 0;
+				audioSource.start(0, offset);
+				startTime = audioContext.currentTime - offset;
+				isPlaying = true;
+				
+				// Update UI
+				playIcon.classList.add('hidden');
+				pauseIcon.classList.remove('hidden');
+				playerStatus.textContent = "Memutar...";
+				playOverlay.style.display = 'none';
+				
+				// Update timer
+				updateTimerAndWaveform();
+				
+				// Event ketika selesai
+				audioSource.onended = () => {
+					if (isPlaying) {
+						stopPlayback();
+						pausedAt = 0;
+						timeDisplay.textContent = `00:00 / ${formatTime(duration)}`;
+						playerStatus.textContent = "Selesai";
+						playOverlay.style.display = 'flex';
+					}
+				};
+				
+				return true;
+			} catch (error) {
+				console.error("Error starting playback:", error);
+				return false;
+			}
+		}
+
+		// Fungsi menghentikan playback
+		function stopPlayback() {
+			if (audioSource) {
+				try {
+					audioSource.stop();
+				} catch (e) {}
+				audioSource = null;
+			}
+			isPlaying = false;
+			if (animationFrameId) {
+				cancelAnimationFrame(animationFrameId);
+				animationFrameId = null;
+			}
+			playIcon.classList.remove('hidden');
+			pauseIcon.classList.add('hidden');
+		}
+
+		// Fungsi pause playback
+		function pausePlayback() {
+			if (audioSource && isPlaying) {
+				try {
+					pausedAt = audioContext.currentTime - startTime;
+					audioSource.stop();
+					audioSource = null;
+				} catch (e) {}
+				isPlaying = false;
+				playIcon.classList.remove('hidden');
+				pauseIcon.classList.add('hidden');
+				playerStatus.textContent = "Dijeda";
+				if (animationFrameId) {
+					cancelAnimationFrame(animationFrameId);
+					animationFrameId = null;
+				}
+			}
+		}
+
+		// Fungsi toggle play/pause
+		function togglePlayback() {
+			if (!audioBuffer) {
+				showCustomToast("Silakan upload file audio terlebih dahulu", "error");
+				return;
+			}
+			
+			if (isPlaying) {
+				pausePlayback();
+			} else {
+				// Jika sudah selesai (pausedAt mendekati duration)
+				if (pausedAt >= duration - 0.1) {
+					pausedAt = 0;
+				}
+				startPlayback();
+			}
+		}
+
+		// Update timer dan waveform
+		function updateTimerAndWaveform() {
+			if (!isPlaying) return;
+			
+			const currentTime = audioContext.currentTime - startTime;
+			if (currentTime >= duration) {
+				return;
+			}
+			timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+			
+			animationFrameId = requestAnimationFrame(updateTimerAndWaveform);
+		}
+
+		// Reset file
+		btnReset.addEventListener('click', () => {
+			// Hentikan playback
+			if (isPlaying) {
+				stopPlayback();
+			}
+			
+			// Reset state
+			audioUpload.value = '';
+			fileInfo.classList.add('hidden');
+			uploadLabel.innerHTML = '<i data-lucide="upload-cloud" class="w-4 h-4 inline mr-1"></i> Unggah file audio (.mp3, .wav, .m4a)';
+			lucide.createIcons();
+			
+			// Revoke object URL
+			if (window.uploadedAudioUrl) {
+				URL.revokeObjectURL(window.uploadedAudioUrl);
+				window.uploadedAudioUrl = null;
+			}
+			window.uploadedAudioFile = null;
+			audioBuffer = null;
+			isPlaying = false;
+			pausedAt = 0;
+			duration = 0;
+			
+			// Reset UI
+			playIcon.classList.remove('hidden');
+			pauseIcon.classList.add('hidden');
+			timeDisplay.textContent = "00:00 / 00:00";
+			playerStatus.textContent = "Audio Siap";
+			playOverlay.style.display = 'flex';
+			
+			// Tutup AudioContext
+			if (audioContext) {
+				audioContext.close();
+				audioContext = null;
+				analyser = null;
+			}
+			
+			updateFfmpegTerminal();
+			showCustomToast("Audio direset", "success");
+		});
+
+		// Demo synth (alternatif jika tidak upload file)
+		btnDemo.addEventListener('click', () => {
+			showCustomToast("🎹 Silakan upload file audio MP3/WAV terlebih dahulu untuk memulai", "info");
+		});
+
+		// Event listener tombol play/pause
+		btnTogglePlay.addEventListener('click', togglePlayback);
+
+		// Overlay play
+		playOverlay.addEventListener('click', () => {
+			if (audioBuffer) {
+				togglePlayback();
+			} else {
+				showCustomToast("Silakan upload file audio terlebih dahulu", "error");
+			}
+		});
 
         // Event listener untuk reset file
         btnReset.addEventListener('click', () => {
@@ -758,22 +1008,6 @@
                 lucide.createIcons();
             }
         });
-        const myWidget = cloudinary.createUploadWidget({
-  cloudName: 'NAMA_CLOUD_ANDA', 
-  uploadPreset: 'NAMA_PRESET_ANDA'
-}, (error, result) => { 
-  if (!error && result && result.event === "success") { 
-    console.log('URL File:', result.info.secure_url);
-    // Simpan URL ini ke variabel untuk digunakan oleh FFmpeg
-    window.uploadedAudioUrl = result.info.secure_url;
-    updateFfmpegTerminal(); // Fungsi Anda untuk update perintah FFmpeg
-  }
-});
-
-// Panggil widget saat tombol ditekan
-document.getElementById("btn-upload").addEventListener("click", () => {
-  myWidget.open();
-});
     </script>
 </body>
 </html>
