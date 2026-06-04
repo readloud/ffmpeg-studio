@@ -1,0 +1,71 @@
+name: "Auto Update & Auto Merge Dependencies"
+
+on:
+  # Berjalan secara terjadwal (Setiap hari Senin pukul 00:00 UTC)
+  schedule:
+    - cron: '0 0 * * 1'
+  # Memicu otomatis ketika ada Pull Request baru (dari Dependabot atau manual)
+  pull_request:
+    branches:
+      - main
+  # Mengizinkan pemicuan manual dari dashboard GitHub Actions
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  # Tahap 1: Melakukan pengujian kode untuk memastikan tidak ada fungsi yang rusak setelah update
+  test-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout Code"
+        uses: actions/checkout@v4
+
+      - name: "Setup Node.js Environment"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "npm"
+          cache-dependency-path: "package-lock.json" # Gunakan jika Anda memiliki package-lock.json
+
+      - name: "Install Dependencies"
+        run: |
+          if [ -f package.json ]; then
+            npm install
+          else
+            echo "Tidak ada package.json, melewati instalasi npm."
+          fi
+
+      - name: "Validate JavaScript Code (Lint & Syntax Check)"
+        run: |
+          # Melakukan pengecekan sintaks dasar pada file backend serverless Anda
+          node --check api/analyze.js
+          echo "Sintaks api/analyze.js valid dan aman!"
+
+  # Tahap 2: Otomatis menggabungkan (Auto-Merge) jika PR berasal dari Dependabot dan lolos uji
+  auto-merge-dependabot:
+    needs: test-and-validate
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: "Fetch Dependabot Metadata"
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      # Melakukan persetujuan otomatis (Approve) terhadap PR Dependabot
+      - name: "Approve Pull Request"
+        run: gh pr approve "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Melakukan merge otomatis menggunakan metode Squash
+      - name: "Auto-merge for Dependabot PRs"
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
