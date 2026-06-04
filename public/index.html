@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFmpeg Studio AI | Content Producer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+	<script src="https://unpkg.com/lucide@latest"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .code-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4f46e5;
+        }
+    </style>
+</head>
+<body class="bg-dark-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+    <header class="border-b border-slate-800 bg-dark-900/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-indigo-600 to-purple-600 p-2 rounded-xl text-white shadow-lg shadow-indigo-500/20">
+                    <i data-lucide="music-4" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-base md:text-lg font-bold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">FFmpeg Studio AI</h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">Social Media Content Creator Assistant</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span class="text-[10px] md:text-xs bg-indigo-500/10 text-indigo-400 px-3 py-1 rounded-full border border-indigo-500/20 font-medium flex items-center gap-1.5">
+                    <span class="h-1.5 w-1.5 rounded-full bg-indigo-400"></span> v2.5-Flash Engine
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <section class="lg:col-span-5 space-y-6">
+                <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                    <h2 class="text-base font-semibold text-white mb-4 flex items-center gap-2">
+                        <i data-lucide="file-audio" class="w-5 h-5 text-indigo-500"></i>
+                        1. Unggah File Audio
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div class="border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl p-5 transition-all text-center cursor-pointer relative group/upload bg-dark-950/50">
+                            <input type="file" id="audio-upload" accept="audio/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                            <div class="space-y-2">
+                                <i data-lucide="upload-cloud" class="mx-auto h-8 w-8 text-slate-500 group-hover/upload:text-indigo-400 transition-colors"></i>
+                                <div class="text-sm font-medium text-slate-300" id="upload-label">Unggah file audio (.mp3, .wav, .m4a)</div>
+                                <p class="text-xs text-slate-500">Maksimum ukuran direkomendasikan ~50MB</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs text-slate-400">
+                            <span>Ingin mencoba instan?</span>
+							
+                            <button id="btn-demo" class="text-indigo-400 hover:text-indigo-300 font-semibold underline flex items-center gap-1">
+                                🎹 Putar Demo Synth
+                            </button>
+                        </div>
+
+                        <div id="file-info" class="hidden bg-slate-800/40 border border-slate-700/50 rounded-xl p-3 text-xs flex items-center justify-between">
+                            <div class="truncate pr-4 flex items-center gap-2">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                                <div class="truncate">
+                                    <span class="font-semibold text-slate-300 block truncate" id="file-name">audio_file.mp3</span>
+                                    <span class="text-slate-500" id="file-size">0.0 MB</span>
+                                </div>
+                            </div>
+                            <button id="btn-reset" class="text-red-400 hover:text-red-300 font-medium hover:bg-red-500/10 px-2 py-1 rounded-lg transition-all">Hapus</button>
+                        </div>
+
+                        <div id="ai-suggest-box" class="bg-indigo-950/30 border border-indigo-500/20 rounded-xl p-4 space-y-3">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="sparkles" class="w-4 h-4 text-indigo-400 animate-pulse"></i>
+                                <span class="text-xs font-semibold text-indigo-300">Detektor Jenis Konten & AI Generator</span>
+                            </div>
+                            <p class="text-[11px] text-slate-400">AI Serverless terenkripsi untuk mendeteksi tipe musik (lirik, singer) atau edukasi/coding (situs referensi, forum) dari nama berkas audio Anda.</p>
+                            <button id="btn-ai-analyze" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-2.5 rounded-lg transition-all flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/10">
+                                <i data-lucide="wand2" class="w-3.5 h-3.5"></i> Analisis AI
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+                    <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                        <i data-lucide="video" class="w-5 h-5 text-purple-400"></i>
+                        2. Latar Belakang Video & Gambar (AI Finder)
+                    </h2>
+                    
+                    <div class="space-y-3">
+                        <div class="flex gap-2">
+                            <input type="text" id="video-keyword" placeholder="Contoh: lofi aesthetic, synthwave, retro, nature..." class="flex-grow bg-dark-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                            <button id="btn-search-video" class="bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white px-3 text-xs rounded-lg font-semibold transition-all flex items-center gap-1">
+                                <i data-lucide="search" class="w-3.5 h-3.5"></i> Cari
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between text-[11px] text-slate-500 px-1">
+                            <div class="flex items-center gap-3">
+                                <label class="flex items-center gap-1 cursor-pointer">
+                                    <input type="radio" name="api-provider" value="pexels" checked class="accent-indigo-500" /> Pexels
+                                </label>
+                                <label class="flex items-center gap-1 cursor-pointer">
+                                    <input type="radio" name="api-provider" value="pixabay" class="accent-indigo-500" /> Pixabay
+                                </label>
+                            </div>
+                            <button id="btn-toggle-key-input" class="text-indigo-400 hover:underline font-semibold flex items-center gap-1">
+                                <i data-lucide="key" class="w-3 h-3"></i> Atur API Key
+                            </button>
+                        </div>
+
+                        <div id="api-key-container" class="hidden bg-dark-950 p-4 rounded-xl border border-slate-800 space-y-3 transition-all">
+                            <h3 class="text-xs font-semibold text-indigo-400 flex items-center gap-1">
+                                <i data-lucide="settings" class="w-3.5 h-3.5"></i> Kustomisasi API
+                            </h3>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[10px] text-slate-400 font-semibold uppercase mb-1">Pilih Provider API</label>
+                                    <select id="custom-api-provider" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                        <option value="HUGHINGFACE">HUGHINGFACE</option>
+                                        <option value="PEXELS">PEXELS</option>
+                                        <option value="PIXABAY">PIXABAY</option>
+                                        <option value="DEEPSEEK">DEEPSEEK</option>
+                                        <option value="MIMO">MIMO</option>
+                                        <option value="OPENAI">OPENAI</option>
+                                        <option value="CLAUDE">CLAUDE</option>
+                                        <option value="POLLINATIONS">POLLINATIONS</option>
+                                        <option value="AIHUBMIX">AIHUBMIX</option>
+                                        <option value="MOONSHOT">MOONSHOT</option>
+                                        <option value="AZURE">AZURE</option>
+                                        <option value="GROK">GROK</option>
+                                        <option value="QWEN">QWEN</option>
+                                        <option value="MINIMAX">MINIMAX</option>
+                                        <option value="MODELSCOPE">MODELSCOPE</option>
+                                        <option value="GEMINI" selected>GEMINI</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-slate-400 font-semibold uppercase mb-1">API Key
+									</label>
+                                    <input type="password" id="custom-api-key" placeholder="Masukkan API Key manual" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                                </div>
+                            </div>
+                            <span class="text-[9px] text-slate-500 block leading-normal">Biarkan kosong jika ingin menggunakan kredensial bawaan.</span>
+                        </div>
+
+                        <div id="video-results-grid" class="grid grid-cols-3 gap-2 overflow-y-auto max-h-36 pr-1"></div>
+                    </div>
+                </div>
+
+                <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+                    <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                        <i data-lucide="badge-check" class="w-5 h-5 text-indigo-400"></i>
+                        3. Tambahkan Watermark / Logo Text
+                    </h2>
+                    <div class="space-y-3">
+                        <div class="flex gap-3">
+                            <div class="w-2/3">
+                                <label class="block text-[11px] text-slate-400 mb-1">Teks Logo</label>
+                                <input type="text" id="logo-text" value="STUDIO AI" class="w-full bg-dark-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                            </div>
+                            <div class="w-1/3">
+                                <label class="block text-[11px] text-slate-400 mb-1">Warna</label>
+                                <div class="flex items-center space-x-1.5 bg-dark-950 border border-slate-800 rounded-lg p-1">
+                                    <input type="color" id="logo-color" value="#ffffff" class="w-6 h-6 rounded border-0 cursor-pointer bg-transparent" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] text-slate-400 mb-1">Posisi Logo</label>
+                                <select id="logo-position" class="w-full bg-dark-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none">
+                                    <option value="top-left" selected>Pojok Kiri Atas</option>
+                                    <option value="top-right">Pojok Kanan Atas</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-slate-400 mb-1">Ukuran Font</label>
+                                <select id="logo-size" class="w-full bg-dark-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none">
+                                    <option value="16">Kecil (16px)</option>
+                                    <option value="24" selected>Sedang (24px)</option>
+                                    <option value="36">Besar (36px)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
+                    <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                        <i data-lucide="sliders" class="w-5 h-5 text-pink-400"></i>
+                        4. Kustomisasi Efek Grafis & Waveform
+                    </h2>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Resolusi Video</label>
+                        <select id="param-resolution" class="w-full bg-dark-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="1920x1080">1920 x 1080 (Lanskap Full HD 16:9)</option>
+                            <option value="1280x720" selected>1280 x 720 (Lanskap HD 1280p)</option>
+                            <option value="1080x1920">1080 x 1920 (Potret TikTok / Reels 9:16)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Gaya Visualisasi Waveform</label>
+                        <div class="grid grid-cols-3 gap-1.5">
+                            <button data-mode="line" class="mode-btn active bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 py-2 rounded-lg text-[11px] font-semibold hover:bg-indigo-600/10 transition-all">Line</button>
+                            <button data-mode="cline" class="mode-btn bg-dark-950 text-slate-400 border border-slate-800 py-2 rounded-lg text-[11px] font-semibold hover:bg-slate-800 transition-all">Center Line</button>
+                            <button data-mode="circular" class="mode-btn bg-dark-950 text-slate-400 border border-slate-800 py-2 rounded-lg text-[11px] font-semibold hover:bg-slate-800 transition-all">Circular 🌀</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-2">Format Piksel</label>
+                            <select id="param-pixel" class="w-full bg-dark-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="yuv420p" selected>yuv420p (Kompatibel)</option>
+                                <option value="yuv444p">yuv444p (Kualitas Tinggi)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-2">Kodek Audio</label>
+                            <select id="param-audio-codec" class="w-full bg-dark-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="copy" selected>copy (Cepat)</option>
+                                <option value="aac">aac (Encode Ulang)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 bg-dark-950 p-4 rounded-xl border border-slate-800/80">
+                        <span class="text-xs font-semibold text-slate-300 block">Efek Latar Belakang & Pendaran</span>
+                        <div>
+                            <div class="flex justify-between text-[11px] text-slate-400 mb-1">
+                                <span>Blur Video Latar</span>
+                                <span id="val-bg-blur">4px</span>
+                            </div>
+                            <input type="range" id="param-bg-blur" min="0" max="20" value="4" class="w-full accent-indigo-500" />
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-[11px] text-slate-400 mb-1">
+                                <span>Kecerahan Latar</span>
+                                <span id="val-bg-dim">40%</span>
+                            </div>
+                            <input type="range" id="param-bg-dim" min="10" max="100" value="40" class="w-full accent-indigo-500" />
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-[11px] text-slate-400 mb-1">
+                                <span>Glow / Pendaran Waveform</span>
+                                <span id="val-glow">15px</span>
+                            </div>
+                            <input type="range" id="param-bg-glow" min="0" max="40" value="15" class="w-full accent-indigo-500" />
+                        </div>
+                        <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" id="param-particles" checked class="rounded bg-slate-900 border-slate-800 accent-indigo-600" /> Efek Debu Partikel (Reactive)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Warna Garis</label>
+                            <div class="flex items-center space-x-2 bg-dark-950 border border-slate-800 rounded-lg p-1.5">
+                                <input type="color" id="param-color" value="#a5b4fc" class="w-6 h-6 rounded border-0 cursor-pointer bg-transparent" />
+                                <input type="text" id="param-color-text" value="#a5b4fc" class="w-full bg-transparent text-[11px] text-slate-300 focus:outline-none border-0 font-mono" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Warna Latar (Solid)</label>
+                            <div class="flex items-center space-x-2 bg-dark-950 border border-slate-800 rounded-lg p-1.5">
+                                <input type="color" id="param-bg" value="#020617" class="w-6 h-6 rounded border-0 cursor-pointer bg-transparent" />
+                                <input type="text" id="param-bg-text" value="#020617" class="w-full bg-transparent text-[11px] text-slate-300 focus:outline-none border-0 font-mono" />
+                            </div>
+                        </div>
+                    </div>
+					<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500 space-y-1">
+                        <p>© 2026<a class="text-light-gray2" href="https://readloud.github.io/"> FFmpeg Studio AI</a> <a class="text-light-gray2" href="https://gemini.google.com/app"> - Powered by Gemini AI Assistant</a> </p>
+                    </div>
+					<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500 space-y-2">
+					        <p><a href="https://github.com/readloud" ><i class="fab fa-github tz-icon-color"></i>  </a> 
+							<a href="https://readloud.slack.com/archives/C036G9A08CE" ><i class="fab fa-slack tz-icon-color"></i> </a> 
+							<a href="https://instagram.com/mansz.81" ><i class="fab fa-facebook tz-icon-color"></i> </a> 
+							<a href="https://facebook.com/mansz.81" ><i class="fab fa-instagram tz-icon-color"></i> </a> 
+							<a href="https://id.pinterest.com/readloud7/" ><i class="fab fa-pinterest tz-icon-color"></i> </a> 
+							<a href="https://discord.gg/readloud" ><i class="fab fa-discord tz-icon-color"></i> </a>
+							<a href="https://youtube.com/@readloud7" ><i class="fab fa-youtube tz-icon-color"></i> 
+							</a> </p>
+                                </div>
+							</div>
+            </section>
+
+            <section class="lg:col-span-7 space-y-6">
+                <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col relative">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                            <i data-lucide="eye" class="text-indigo-400 w-5 h-5"></i>
+                            Studio Monitor (Pratinjau)
+                        </h2>
+                        <div id="player-status" class="text-xs text-slate-400 bg-slate-800 px-3 py-1 rounded-lg">Audio Siap</div>
+                    </div>
+
+                    <div class="relative w-full aspect-video rounded-xl overflow-hidden border border-slate-800 bg-dark-950 shadow-inner flex items-center justify-center" id="canvas-container">
+                        <canvas id="preview-canvas" class="max-w-full max-h-full block object-contain bg-dark-950"></canvas>
+                        <div id="play-overlay" class="absolute inset-0 flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm transition-opacity duration-300 cursor-pointer">
+                            <div class="p-4 bg-indigo-600 hover:bg-indigo-500 rounded-full hover:scale-110 transition-transform shadow-lg shadow-indigo-600/30">
+                                <i data-lucide="play" class="w-8 h-8 text-white fill-current"></i>
+                            </div>
+                            <span class="text-xs text-slate-300 font-medium mt-4 uppercase tracking-wider">Klik Untuk Memulai Monitor</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+                        <div class="flex items-center space-x-2">
+                            <button id="btn-toggle-play" class="bg-indigo-600 text-white p-2.5 rounded-lg hover:bg-indigo-500 transition-colors">
+                                <i data-lucide="play" id="play-icon" class="w-5 h-5"></i>
+                                <i data-lucide="pause" id="pause-icon" class="w-5 h-5 hidden"></i>
+                            </button>
+                            <span id="time-display" class="text-xs font-mono text-slate-400">00:00 / 00:00</span>
+                        </div>
+                        <button id="btn-record-video" class="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow-lg shadow-red-500/10">
+                            <i data-lucide="video-recorder" class="w-4 h-4 animate-pulse"></i>
+                            <span id="record-text">Rekam & Download Video</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                            <i data-lucide="file-text" class="w-5 h-5 text-indigo-400"></i>
+                            Informasi Konten Overlay
+                        </h2>
+                        <div class="flex bg-dark-950 p-1 rounded-lg border border-slate-800 text-xs">
+                            <button id="tab-music" class="px-3 py-1 rounded-md font-medium bg-indigo-600 text-white">Lagu / Musik</button>
+                            <button id="tab-edu" class="px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white">Edukasi / Forum</button>
+                        </div>
+                    </div>
+
+                    <div id="content-music-form" class="space-y-4">
+                        <p class="text-xs text-slate-400 leading-relaxed">Otomatis oleh AI, atau sesuaikan:</p>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-[10px] text-slate-400 font-semibold uppercase">Judul Lagu</label>
+                                <input type="text" id="meta-title" value="Aura Nostalgia" class="w-full bg-dark-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-400 font-semibold uppercase">Penyanyi</label>
+                                <input type="text" id="meta-singer" value="Rian Pratama" class="w-full bg-dark-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-400 font-semibold uppercase">Komposer</label>
+                                <input type="text" id="meta-composer" value="Dian Lesmana" class="w-full bg-dark-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-400 font-semibold uppercase">Album</label>
+                                <input type="text" id="meta-album" value="Gema Angkasa" class="w-full bg-dark-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-400 font-semibold uppercase">Genre</label>
+                                <input type="text" id="meta-genre" value="Lofi / Ambient" class="w-full bg-dark-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-400 font-semibold uppercase">Tahun Rilis</label>
+                                <input type="text" id="meta-release" value="2026" class="w-full bg-dark-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-400 font-semibold uppercase mb-1">Lirik Lagu (Overlay Monitor)</label>
+                            <textarea id="meta-lyrics" rows="3" class="w-full bg-dark-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-300 focus:outline-none" placeholder="Masukkan lirik lagu..."></textarea>
+                        </div>
+                    </div>
+
+                    <div id="content-edu-form" class="hidden space-y-4">
+                        <p class="text-xs text-slate-400 leading-relaxed">Referensi situs, forum, dan komunitas edukasi terkait topik:</p>
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] text-slate-400 font-semibold uppercase">Nama Topik Bahasan</label>
+                                    <input type="text" id="edu-topic" value="Dasar Pemrograman Web" class="w-full bg-dark-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none" />
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-slate-400 font-semibold uppercase">Kategori</label>
+                                    <input type="text" id="edu-category" value="Coding & Teknologi" class="w-full bg-dark-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none" />
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <span class="block text-[10px] text-slate-400 font-semibold uppercase">Situs & Forum Terkait</span>
+                                <div id="edu-links-container" class="space-y-2">
+                                    <div class="flex gap-2 items-center">
+                                        <input type="text" placeholder="Nama Situs" value="MDN Web Docs" class="w-1/3 bg-dark-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none" />
+                                        <input type="text" placeholder="URL" value="https://developer.mozilla.org" class="w-2/3 bg-dark-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none" />
+                                    </div>
+                                    <div class="flex gap-2 items-center">
+                                        <input type="text" placeholder="Nama Forum" value="Stack Overflow" class="w-1/3 bg-dark-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none" />
+                                        <input type="text" placeholder="URL" value="https://stackoverflow.com" class="w-2/3 bg-dark-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+                    <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                        <i data-lucide="share-2" class="w-5 h-5 text-emerald-400"></i>
+                        5. Asisten Media Sosial (AI Auto-Caption)
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="bg-dark-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-semibold text-slate-300">Takarir Kreatif Rekomendasi AI:</span>
+                                <button id="btn-copy-caption" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded text-slate-300 flex items-center gap-1">
+                                    <i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin
+                                </button>
+                            </div>
+                            <textarea id="ai-generated-caption" rows="3" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-300 focus:outline-none" placeholder="Takarir dari AI akan muncul di sini..."></textarea>
+                        </div>
+						<div class="grid grid-cols-3 gap-3">
+							<a href="https://www.tiktok.com/upload" target="_blank" class="bg-slate-950 hover:bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all hover:border-pink-500 group">
+						<i class="fa-brands fa-tiktok text-xl text-pink-500 group-hover:scale-110 transition-transform"></i>
+						<span class="text-[11px] font-semibold text-slate-300">TikTok</span>
+							</a>
+							<a href="https://www.instagram.com/" target="_blank" class="bg-slate-950 hover:bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all hover:border-purple-500 group">
+						<i class="fa-brands fa-instagram text-xl text-purple-400 group-hover:scale-110 transition-transform"></i>
+						<span class="text-[11px] font-semibold text-slate-300">Instagram Reels</span>
+							</a>
+							<a href="https://studio.youtube.com/" target="_blank" class="bg-slate-950 hover:bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all hover:border-red-500 group">
+						<i class="fa-brands fa-youtube text-xl text-red-500 group-hover:scale-110 transition-transform"></i>
+						<span class="text-[11px] font-semibold text-slate-300">YouTube Shorts</span>
+							</a>
+						</div>
+                    </div>
+                </div>
+
+                <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                            <i data-lucide="terminal" class="w-5 h-5 text-indigo-400"></i>
+                            FFmpeg Command Terminal
+                        </h2>
+                        <button id="btn-copy" class="text-xs bg-slate-800 text-slate-300 hover:text-white px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1 transition-all">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin
+                        </button>
+                    </div>
+                    <div class="relative bg-dark-950 border border-slate-800/80 rounded-xl p-4 overflow-x-auto">
+                        <pre class="code-font text-xs md:text-sm text-indigo-300 whitespace-pre-wrap select-all leading-relaxed" id="ffmpeg-command">ffmpeg -i input.mp3 -filter_complex "[0:a]showwaves=s=1280x720:mode=line:colors=white,format=yuv420p[v]" -map "[v]" -map 0:a -c:v libx264 -c:a copy output.mp4</pre>
+                    </div>
+                    <div id="copy-toast" class="hidden text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 py-2.5 px-4 rounded-lg flex items-center gap-2">
+                        <i data-lucide="badge-check" class="w-4 h-4"></i> berhasil disalin ke clipboard!
+                    </div>
+                    <!-- Tips / Penjelasan Singkat -->
+                    <div class="bg-indigo-950/20 border border-indigo-900/30 rounded-xl p-4 text-xs text-slate-400 space-y-2">
+						<span class="font-semibold text-slate-200">💡 Tips Menjalankan Perintah</span>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li>Instal FFmpeg di PC/Server Anda.</li>
+                            <li>Buka Terminal / Command Prompt pada direktori tempat file audio berada.</li>
+                            <li>Ganti nama <code class="bg-dark-950 px-1 py-0.5 rounded text-indigo-400 code-font">input.mp3</code> pada perintah di atas dengan nama file audio asli Anda.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <video id="bg-video-element" loop muted crossOrigin="anonymous" class="hidden"></video>
+
+    <script>
+        let audioContext = null, analyser = null, audioSource = null, audioBuffer = null, isPlaying = false;
+        let demoOscillatorInterval = null, startTime = 0, pausedAt = 0, duration = 0, demoOscillators = [], gainNode = null;
+        let mediaRecorder = null, recordedChunks = [], isRecording = false;
+
+        const audioUpload = document.getElementById('audio-upload'), uploadLabel = document.getElementById('upload-label');
+        const fileInfo = document.getElementById('file-info'), fileName = document.getElementById('file-name'), fileSize = document.getElementById('file-size');
+        const btnReset = document.getElementById('btn-reset'), btnDemo = document.getElementById('btn-demo'), btnTogglePlay = document.getElementById('btn-toggle-play');
+        const playIcon = document.getElementById('play-icon'), pauseIcon = document.getElementById('pause-icon'), timeDisplay = document.getElementById('time-display');
+        const playerStatus = document.getElementById('player-status'), playOverlay = document.getElementById('play-overlay');
+        const paramResolution = document.getElementById('param-resolution'), paramColor = document.getElementById('param-color'), paramColorText = document.getElementById('param-color-text');
+        const paramBg = document.getElementById('param-bg'), paramBgText = document.getElementById('param-bg-text'), paramPixel = document.getElementById('param-pixel'), paramAudioCodec = document.getElementById('param-audio-codec');
+        const modeButtons = document.querySelectorAll('.mode-btn'), commandText = document.getElementById('ffmpeg-command'), btnCopy = document.getElementById('btn-copy'), copyToast = document.getElementById('copy-toast');
+        const paramBgBlur = document.getElementById('param-bg-blur'), paramBgDim = document.getElementById('param-bg-dim'), paramBgGlow = document.getElementById('param-bg-glow'), paramParticles = document.getElementById('param-particles');
+        const valBgBlur = document.getElementById('val-bg-blur'), valBgDim = document.getElementById('val-bg-dim'), valGlow = document.getElementById('val-glow');
+        const videoKeyword = document.getElementById('video-keyword'), btnSearchVideo = document.getElementById('btn-search-video'), btnToggleKeyInput = document.getElementById('btn-toggle-key-input'), apiKeyContainer = document.getElementById('api-key-container'), customApiKey = document.getElementById('custom-api-key'), videoResultsGrid = document.getElementById('video-results-grid'), bgVideoElement = document.getElementById('bg-video-element');
+        const btnAiAnalyze = document.getElementById('btn-ai-analyze'), customApiProvider = document.getElementById('custom-api-provider');
+
+        // Elemen Metadata Tambahan
+        const metaTitle = document.getElementById('meta-title'), metaSinger = document.getElementById('meta-singer'), metaComposer = document.getElementById('meta-composer'), metaAlbum = document.getElementById('meta-album'), metaGenre = document.getElementById('meta-genre'), metaRelease = document.getElementById('meta-release'), metaLyrics = document.getElementById('meta-lyrics');
+        const eduTopic = document.getElementById('edu-topic'), eduCategory = document.getElementById('edu-category');
+        const tabMusic = document.getElementById('tab-music'), tabEdu = document.getElementById('tab-edu'), contentMusicForm = document.getElementById('content-music-form'), contentEduForm = document.getElementById('content-edu-form');
+        const aiGeneratedCaption = document.getElementById('ai-generated-caption'), btnCopyCaption = document.getElementById('btn-copy-caption');
+
+        // Pemuatan API Key dan Provider kustom dari LocalStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            const savedProvider = localStorage.getItem('saved_api_provider');
+            if (savedProvider) {
+                customApiProvider.value = savedProvider;
+                const savedKey = localStorage.getItem(`saved_api_key_${savedProvider}`);
+                customApiKey.value = savedKey ? savedKey : '';
+            }
+            updateFfmpegTerminal();
+        });
+
+        // Event listener saat dropdown provider berubah
+        customApiProvider.addEventListener('change', () => {
+            const activeProvider = customApiProvider.value;
+            localStorage.setItem('saved_api_provider', activeProvider);
+            const savedKey = localStorage.getItem(`saved_api_key_${activeProvider}`);
+            customApiKey.value = savedKey ? savedKey : '';
+            customApiKey.placeholder = `Masukkan API Key kustom untuk ${activeProvider}`;
+        });
+
+        // Event listener saat input API key diketik manual
+        customApiKey.addEventListener('input', () => {
+            const activeProvider = customApiProvider.value;
+            const keyValue = customApiKey.value.trim();
+            if (keyValue) {
+                localStorage.setItem(`saved_api_key_${activeProvider}`, keyValue);
+            } else {
+                localStorage.removeItem(`saved_api_key_${activeProvider}`);
+            }
+        });
+
+        // Toggle container Pengaturan API Key
+        btnToggleKeyInput.addEventListener('click', () => {
+            apiKeyContainer.classList.toggle('hidden');
+        });
+
+        // Sinkronisasi Input Warna & Teks Parameter
+        paramColor.addEventListener('input', (e) => { paramColorText.value = e.target.value; updateFfmpegTerminal(); });
+        paramColorText.addEventListener('input', (e) => { if(/^#[0-9A-F]{6}$/i.test(e.target.value)) { paramColor.value = e.target.value; updateFfmpegTerminal(); } });
+        paramBg.addEventListener('input', (e) => { paramBgText.value = e.target.value; updateFfmpegTerminal(); });
+        paramBgText.addEventListener('input', (e) => { if(/^#[0-9A-F]{6}$/i.test(e.target.value)) { paramBg.value = e.target.value; updateFfmpegTerminal(); } });
+
+        // Update Slider Nilai Teks Realtime
+        paramBgBlur.addEventListener('input', (e) => { valBgBlur.textContent = `${e.target.value}px`; });
+        paramBgDim.addEventListener('input', (e) => { valBgDim.textContent = `${e.target.value}%`; });
+        paramBgGlow.addEventListener('input', (e) => { valGlow.textContent = `${e.target.value}px`; });
+
+        // Manajemen Tab Form Berkas Konten
+        tabMusic.addEventListener('click', () => {
+            tabMusic.className = "px-3 py-1 rounded-md font-medium bg-indigo-600 text-white";
+            tabEdu.className = "px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white";
+            contentMusicForm.classList.remove('hidden'); contentEduForm.classList.add('hidden');
+        });
+        tabEdu.addEventListener('click', () => {
+            tabEdu.className = "px-3 py-1 rounded-md font-medium bg-indigo-600 text-white";
+            tabMusic.className = "px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white";
+            contentEduForm.classList.remove('hidden'); contentMusicForm.classList.add('hidden');
+        });
+
+        // Logic Update Terminal Command FFmpeg
+        function updateFfmpegTerminal() {
+            const res = paramResolution.value;
+            const mode = document.querySelector('.mode-btn.active').dataset.mode;
+            const color = paramColor.value.replace('#', '0x');
+            const bg = paramBg.value;
+            const pix = paramPixel.value;
+            const acodec = paramAudioCodec.value;
+
+            let filter = `[0:a]showwaves=s=${res}:mode=${mode}:colors=${color},format=${pix}[v]`;
+            if (mode === 'circular') {
+                filter = `[0:a]showwaves=s=${res}:mode=line:colors=${color},format=${pix},edgedetect[v]`;
+            }
+            commandText.textContent = `ffmpeg -i input.mp3 -filter_complex "${filter}" -map "[v]" -map 0:a -c:v libx264 -c:a ${acodec} output.mp4`;
+        }
+
+        paramResolution.addEventListener('change', updateFfmpegTerminal);
+        paramPixel.addEventListener('change', updateFfmpegTerminal);
+        paramAudioCodec.addEventListener('change', updateFfmpegTerminal);
+        modeButtons.forEach(btn => btn.addEventListener('click', (e) => {
+            modeButtons.forEach(b => b.classList.remove('active', 'bg-indigo-600/20', 'text-indigo-400', 'border-indigo-500/30'));
+            modeButtons.forEach(b => b.classList.add('bg-dark-950', 'text-slate-400', 'border-slate-800'));
+            e.target.classList.add('active', 'bg-indigo-600/20', 'text-indigo-400', 'border-indigo-500/30');
+            updateFfmpegTerminal();
+        }));
+
+        // Salin Perintah Terminal FFmpeg
+        btnCopy.addEventListener('click', () => {
+            const range = document.createRange(); range.selectNode(commandText);
+            window.getSelection().removeAllRanges(); window.getSelection().addRange(range);
+            try {
+                if (document.execCommand('copy')) {
+                    copyToast.classList.remove('hidden'); setTimeout(() => copyToast.classList.add('hidden'), 4000);
+                }
+            } catch (err) {}
+            window.getSelection().removeAllRanges();
+        });
+
+        btnCopyCaption.addEventListener('click', () => { aiGeneratedCaption.select(); document.execCommand('copy'); showCustomToast("Takarir disalin!", "success"); });
+
+        function showCustomToast(message, type = "error") {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-5 right-5 z-50 ${type === "success" ? "bg-emerald-600/90 border-emerald-500/30" : "bg-red-600/90 border-red-500/30"} text-white px-5 py-3 rounded-xl shadow-2xl border text-xs font-semibold max-w-sm transition-all`;
+            toast.textContent = message; document.body.appendChild(toast);
+            setTimeout(() => { toast.classList.add('opacity-0'); setTimeout(() => toast.remove(), 500); }, 4000);
+        }
+
+        // Integrasi Request AI Backend ke file analyze.js
+        btnAiAnalyze.addEventListener('click', async () => {
+            const fileUploaded = audioUpload.files[0];
+            let activeAudioName = fileUploaded ? fileUploaded.name : "Aura Nostalgia Synthwave Mix.mp3";
+            
+            btnAiAnalyze.disabled = true;
+            btnAiAnalyze.innerHTML = `<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Memproses Analisis AI...`;
+            lucide.createIcons();
+
+            // Ambil provider & manual key kustom dari UI untuk dilempar ke Vercel Function
+            const activeProvider = customApiProvider.value;
+            const manualKey = customApiKey.value.trim();
+
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        activeName: activeAudioName,
+                        customProvider: activeProvider,
+                        customApiKeyManual: manualKey
+                    })
+                });
+
+                if (!response.ok) throw new Error("Terjadi kesalahan server.");
+                const result = await response.json();
+                
+                if(result.data) {
+                    if (result.data.contentType === 'music' || result.data.musicData) {
+                        tabMusic.click();
+                        const m = result.data.musicData || {};
+                        if(m.title) metaTitle.value = m.title;
+                        if(m.singer) metaSinger.value = m.singer;
+                        if(m.composer) metaComposer.value = m.composer;
+                        if(m.album) metaAlbum.value = m.album;
+                        if(m.genre) metaGenre.value = m.genre;
+                        if(m.releaseYear) metaRelease.value = m.releaseYear;
+                        if(m.lyrics) metaLyrics.value = m.lyrics;
+                    } else if (result.data.contentType === 'edu' || result.data.eduData) {
+                        tabEdu.click();
+                        const ed = result.data.eduData || {};
+                        if(ed.topic) eduTopic.value = ed.topic;
+                        if(ed.category) eduCategory.value = ed.category;
+                    }
+
+                    if(result.data.hexColor) {
+                        paramColorText.value = result.data.hexColor;
+                        paramColor.value = result.data.hexColor;
+                        updateFfmpegTerminal();
+                    }
+                    if(result.data.caption) {
+                        aiGeneratedCaption.value = result.data.caption;
+                    }
+                    if(result.data.keyword) {
+                        videoKeyword.value = result.data.keyword;
+                        btnSearchVideo.click();
+                    }
+                    showCustomToast("Analisis AI Berhasil Terbaca!", "success");
+                }
+            } catch (err) {
+                showCustomToast("Gagal mengambil data dari endpoint asisten AI.");
+            } finally {
+                btnAiAnalyze.disabled = false;
+                btnAiAnalyze.innerHTML = `<i data-lucide="wand2" class="w-3.5 h-3.5"></i> Jalankan Analisis AI Terenkripsi`;
+                lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+</html>
