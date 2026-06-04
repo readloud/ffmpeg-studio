@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FFmpeg Studio AI | Content Producer</title>
+    <title>FFmpeg Studio | AI Content Producer</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -23,9 +24,10 @@
             }
         }
     </script>
+    <!-- Google Fonts & Lucide Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -47,18 +49,11 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #4f46e5;
         }
-		
-		@keyframes spin {
-			from { transform: rotate(0deg); }
-			to { transform: rotate(360deg); }
-		}
-		.animate-spin {
-		animation: spin 1s linear infinite;
-		}
     </style>
 </head>
 <body class="bg-dark-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
 
+    <!-- Header Utama -->
     <header class="border-b border-slate-800 bg-dark-900/80 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
@@ -78,10 +73,13 @@
         </div>
     </header>
 
+    <!-- Konten Utama -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
+            <!-- Panel Kontrol Kiri -->
             <section class="lg:col-span-5 space-y-6">
+                <!-- Card 1: Input Audio & Engine Selector -->
                 <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl -mr-10 -mt-10"></div>
                     <h2 class="text-base font-semibold text-white mb-4 flex items-center gap-2">
@@ -117,19 +115,35 @@
                             <button id="btn-reset" class="text-red-400 hover:text-red-300 font-medium hover:bg-red-500/10 px-2 py-1 rounded-lg transition-all">Hapus</button>
                         </div>
 
+                        <!-- Dropdown AI Engine Selector -->
+                        <div class="space-y-1 bg-dark-950 p-3.5 rounded-xl border border-slate-800/80">
+                            <label class="block text-[10px] text-slate-400 font-semibold uppercase tracking-wider mb-1 flex items-center gap-1">
+                                <i data-lucide="cpu" class="w-3.5 h-3.5 text-indigo-400"></i> AI Model Engine
+                            </label>
+                            <select id="ai-provider-select" class="w-full bg-dark-900 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                <option value="gemini" selected>Google Gemini 2.5 Flash</option>
+                                <option value="deepseek">DeepSeek R1 / Chat</option>
+                                <option value="claude">Anthropic Claude 3.5 Sonnet</option>
+                                <option value="grok">xAI Grok Beta</option>
+                                <option value="qwen">Alibaba Qwen Turbo</option>
+                                <option value="moonshot">Moonshot Kimi AI</option>
+                            </select>
+                        </div>
+
                         <div id="ai-suggest-box" class="bg-indigo-950/30 border border-indigo-500/20 rounded-xl p-4 space-y-3">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="sparkles" class="w-4 h-4 text-indigo-400 animate-pulse"></i>
-                                <span class="text-xs font-semibold text-indigo-300">Detektor Jenis Konten & AI Generator</span>
+                                <span class="text-xs font-semibold text-indigo-300">Analisis AI Generator</span>
                             </div>
-                            <p class="text-[11px] text-slate-400">AI Serverless terenkripsi untuk mendeteksi tipe musik (lirik, singer) atau edukasi/coding (situs referensi, forum) dari nama berkas audio Anda.</p>
+                            <p class="text-[11px] text-slate-400">Gunakan AI Serverless terenkripsi untuk mendeteksi tipe musik (lirik, singer) atau edukasi/coding (situs referensi, forum) dari nama berkas audio Anda.</p>
                             <button id="btn-ai-analyze" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-2.5 rounded-lg transition-all flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/10">
-                                <i data-lucide="wand2" class="w-3.5 h-3.5"></i> Analisis AI
+                                <i data-lucide="wand2" class="w-3.5 h-3.5"></i> Analisis AI Terenkripsi
                             </button>
                         </div>
                     </div>
                 </div>
 
+                <!-- Card 2: AI Video Finder -->
                 <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                     <h2 class="text-base font-semibold text-white flex items-center gap-2">
                         <i data-lucide="video" class="w-5 h-5 text-purple-400"></i>
@@ -153,17 +167,16 @@
                                     <input type="radio" name="api-provider" value="pixabay" class="accent-indigo-500" /> Pixabay
                                 </label>
                             </div>
-                            <button id="btn-toggle-key-input" class="text-indigo-400 hover:underline font-semibold flex items-center gap-1">
-                                <i data-lucide="key" class="w-3 h-3"></i> Atur API Key
-                            </button>
+                            <button id="btn-toggle-key-input" class="text-indigo-400 hover:underline font-semibold">Atur API Key</button>
                         </div>
 
-                        <div id="api-key-container" class="hidden bg-dark-950 p-4 rounded-xl border border-slate-800 space-y-3 transition-all">
+                        <div id="api-key-container" class="hidden bg-dark-950 p-4 rounded-xl border border-slate-800 space-y-3">
                             <h3 class="text-xs font-semibold text-indigo-400 flex items-center gap-1">
-                                <i data-lucide="settings" class="w-3.5 h-3.5"></i> Kustomisasi API
+                                <i data-lucide="key" class="w-3.5 h-3.5"></i> API Key Kustom (Opsional)
                             </h3>
-                            
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+                            <div class="space-y-1">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-[10px] text-slate-400 font-semibold uppercase mb-1">Pilih Provider API</label>
                                     <select id="custom-api-provider" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500">
@@ -186,17 +199,18 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] text-slate-400 font-semibold uppercase mb-1">API Key</label>
+                                <label class="block text-[10px] text-slate-400 font-semibold uppercase mb-1">API Key</label>
                                     <input type="password" id="custom-api-key" placeholder="Masukkan API Key manual" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
                                 </div>
                             </div>
-                            <span class="text-[9px] text-slate-500 block leading-normal">Biarkan kosong jika ingin menggunakan kredensial bawaan.</span>
+                            <span class="text-[9px] text-slate-500 block leading-normal">Kosong jika ingin menggunakan kredensial bawaan.</span>
                         </div>
 
                         <div id="video-results-grid" class="grid grid-cols-3 gap-2 overflow-y-auto max-h-36 pr-1"></div>
                     </div>
                 </div>
 
+                <!-- Card 3: Watermark / Logo Text -->
                 <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                     <h2 class="text-base font-semibold text-white flex items-center gap-2">
                         <i data-lucide="badge-check" class="w-5 h-5 text-indigo-400"></i>
@@ -235,6 +249,7 @@
                     </div>
                 </div>
 
+                <!-- Card 4: Kustomisasi Efek Grafis & Waveform -->
                 <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
                     <h2 class="text-base font-semibold text-white flex items-center gap-2">
                         <i data-lucide="sliders" class="w-5 h-5 text-pink-400"></i>
@@ -297,7 +312,7 @@
                                 <span>Glow / Pendaran Waveform</span>
                                 <span id="val-glow">15px</span>
                             </div>
-                            <input type="range" id="param-bg-glow" min="0" max="40" value="15" class="w-full accent-indigo-500" />
+                            <input type="range" id="param-glow" min="0" max="40" value="15" class="w-full accent-indigo-500" />
                         </div>
                         <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1">
                             <label class="flex items-center gap-1.5 cursor-pointer">
@@ -322,9 +337,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500 space-y-1">
-                        <p>© 2026<a class="text-light-gray2" href="https://readloud.github.io/"> FFmpeg Studio AI</a> <a class="text-light-gray2" href="https://gemini.google.com/app"> - Powered by Gemini AI Assistant</a> </p>
-                    </div>
+					</div>
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500 space-y-2">
                             <p><a href="https://github.com/readloud" ><i class="fab fa-github tz-icon-color"></i>  </a> 
                             <a href="https://readloud.slack.com/archives/C036G9A08CE" ><i class="fab fa-slack tz-icon-color"></i> </a> 
@@ -334,11 +347,13 @@
                             <a href="https://discord.gg/readloud" ><i class="fab fa-discord tz-icon-color"></i> </a>
                             <a href="https://youtube.com/@readloud7" ><i class="fab fa-youtube tz-icon-color"></i> 
                             </a> </p>
-                                </div>
-                            </div>
+                    </div>
+                
             </section>
 
+            <!-- Panel Preview & Command Kanan -->
             <section class="lg:col-span-7 space-y-6">
+                <!-- Card 5: Studio Monitor -->
                 <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col relative">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-base font-semibold text-white flex items-center gap-2">
@@ -354,7 +369,7 @@
                             <div class="p-4 bg-indigo-600 hover:bg-indigo-500 rounded-full hover:scale-110 transition-transform shadow-lg shadow-indigo-600/30">
                                 <i data-lucide="play" class="w-8 h-8 text-white fill-current"></i>
                             </div>
-                            <span class="text-xs text-slate-300 font-medium mt-4 uppercase tracking-wider">Klik Untuk Memulai Monitor</span>
+                            <span class="text-xs text-slate-300 font-medium mt-4 uppercase tracking-wider">Monitoring</span>
                         </div>
                     </div>
 
@@ -373,11 +388,12 @@
                     </div>
                 </div>
 
+                <!-- Card 6: Deteksi Konten & Metadata -->
                 <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                     <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                         <h2 class="text-base font-semibold text-white flex items-center gap-2">
                             <i data-lucide="file-text" class="w-5 h-5 text-indigo-400"></i>
-                            Informasi Konten Overlay
+                            Informasi Konten Overlay (Dideteksi AI)
                         </h2>
                         <div class="flex bg-dark-950 p-1 rounded-lg border border-slate-800 text-xs">
                             <button id="tab-music" class="px-3 py-1 rounded-md font-medium bg-indigo-600 text-white">Lagu / Musik</button>
@@ -385,8 +401,9 @@
                         </div>
                     </div>
 
+                    <!-- SUB-CARD: METADATA MUSIK -->
                     <div id="content-music-form" class="space-y-4">
-                        <p class="text-xs text-slate-400 leading-relaxed">Otomatis oleh AI, atau sesuaikan:</p>
+                        <p class="text-xs text-slate-400 leading-relaxed">Formulir terisi otomatis oleh AI, atau disesuaikan:</p>
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                             <div>
                                 <label class="block text-[10px] text-slate-400 font-semibold uppercase">Judul Lagu</label>
@@ -419,12 +436,13 @@
                         </div>
                     </div>
 
+                    <!-- SUB-CARD: METADATA EDUKASI -->
                     <div id="content-edu-form" class="hidden space-y-4">
                         <p class="text-xs text-slate-400 leading-relaxed">Referensi situs, forum, dan komunitas edukasi terkait topik:</p>
                         <div class="space-y-3">
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-[10px] text-slate-400 font-semibold uppercase">Nama Topik Bahasan</label>
+                                    <label class="block text-[10px] text-slate-400 font-semibold uppercase">Topik</label>
                                     <input type="text" id="edu-topic" value="Dasar Pemrograman Web" class="w-full bg-dark-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none" />
                                 </div>
                                 <div>
@@ -433,7 +451,7 @@
                                 </div>
                             </div>
                             <div class="space-y-2">
-                                <span class="block text-[10px] text-slate-400 font-semibold uppercase">Situs & Forum Terkait</span>
+                                <span class="block text-[10px] text-slate-400 font-semibold uppercase">Referensi Terkait</span>
                                 <div id="edu-links-container" class="space-y-2">
                                     <div class="flex gap-2 items-center">
                                         <input type="text" placeholder="Nama Situs" value="MDN Web Docs" class="w-1/3 bg-dark-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none" />
@@ -449,6 +467,7 @@
                     </div>
                 </div>
 
+                <!-- Card 7: Media Sosial Caption -->
                 <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                     <h2 class="text-base font-semibold text-white flex items-center gap-2">
                         <i data-lucide="share-2" class="w-5 h-5 text-emerald-400"></i>
@@ -457,7 +476,7 @@
                     <div class="space-y-4">
                         <div class="bg-dark-950 p-4 rounded-xl border border-slate-800 space-y-3">
                             <div class="flex justify-between items-center">
-                                <span class="text-xs font-semibold text-slate-300">Takarir Kreatif Rekomendasi AI:</span>
+                                <span class="text-xs font-semibold text-slate-300">Takarir Rekomendasi AI:</span>
                                 <button id="btn-copy-caption" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded text-slate-300 flex items-center gap-1">
                                     <i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin
                                 </button>
@@ -481,11 +500,11 @@
                     </div>
                 </div>
 
+                <!-- Card 8: Command Terminal -->
                 <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                     <div class="flex items-center justify-between">
                         <h2 class="text-base font-semibold text-white flex items-center gap-2">
-                            <i data-lucide="terminal" class="w-5 h-5 text-indigo-400"></i>
-                            FFmpeg Command Terminal
+                            <i data-lucide="terminal" class="w-5 h-5 text-indigo-400"></i> FFmpeg Command Terminal
                         </h2>
                         <button id="btn-copy" class="text-xs bg-slate-800 text-slate-300 hover:text-white px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1 transition-all">
                             <i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin
@@ -495,15 +514,17 @@
                         <pre class="code-font text-xs md:text-sm text-indigo-300 whitespace-pre-wrap select-all leading-relaxed" id="ffmpeg-command">ffmpeg -i input.mp3 -filter_complex "[0:a]showwaves=s=1280x720:mode=line:colors=white,format=yuv420p[v]" -map "[v]" -map 0:a -c:v libx264 -c:a copy output.mp4</pre>
                     </div>
                     <div id="copy-toast" class="hidden text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 py-2.5 px-4 rounded-lg flex items-center gap-2">
-                        <i data-lucide="badge-check" class="w-4 h-4"></i> berhasil disalin ke clipboard!
+                        <i data-lucide="badge-check" class="w-4 h-4"></i> Berhasil disalin!
                     </div>
                     <div class="bg-indigo-950/20 border border-indigo-900/30 rounded-xl p-4 text-xs text-slate-400 space-y-2">
                         <span class="font-semibold text-slate-200">💡 Tips Menjalankan Perintah</span>
                         <ul class="list-disc pl-4 space-y-1">
-                            <li>Instal FFmpeg di PC/Server Anda.</li>
-                            <li>Buka Terminal / Command Prompt pada direktori tempat file audio berada.</li>
-                            <li>Ganti nama <code class="bg-dark-950 px-1 py-0.5 rounded text-indigo-400 code-font">input.mp3</code> pada perintah di atas dengan nama file audio asli Anda.</li>
+                            <li>Instal FFmpeg di PC/Server.</li>
+                            <li>Ganti nama <code class="bg-dark-950 px-1 py-0.5 rounded text-indigo-400 code-font">input.mp3</code> pada perintah di atas dengan nama file audio.</li>
                         </ul>
+                    </div>
+					<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500 space-y-1">
+                        <p>© 2026<a class="text-light-gray2" href="https://readloud.github.io/"> FFmpeg Studio AI</a> <a class="text-light-gray2" href="https://gemini.google.com/app"> - Powered by Gemini AI Assistant</a> </p>
                     </div>
                 </div>
             </section>
@@ -512,415 +533,643 @@
 
     <video id="bg-video-element" loop muted crossOrigin="anonymous" class="hidden"></video>
 
+    <!-- Logic JavaScript -->
     <script>
-        let audioContext = null, audioSource = null, analyser = null, gainNode = null; audioBuffer = null, isPlaying = false;
-        let demoOscillatorInterval = null, startTime = 0, pausedAt = 0, duration = 0, demoOscillators = [], animationFrameId = null;
-		let mediaRecorder = null, recordedChunks = [], isRecording = false;
+        let audioContext = null, analyser = null, audioSource = null, audioBuffer = null, isPlaying = false;
+        let demoOscillatorInterval = null, startTime = 0, pausedAt = 0, duration = 0, demoOscillators = [], gainNode = null;
+        let mediaRecorder = null, recordedChunks = [], isRecording = false;
 
         const audioUpload = document.getElementById('audio-upload'), uploadLabel = document.getElementById('upload-label');
         const fileInfo = document.getElementById('file-info'), fileName = document.getElementById('file-name'), fileSize = document.getElementById('file-size');
         const btnReset = document.getElementById('btn-reset'), btnDemo = document.getElementById('btn-demo'), btnTogglePlay = document.getElementById('btn-toggle-play');
         const playIcon = document.getElementById('play-icon'), pauseIcon = document.getElementById('pause-icon'), timeDisplay = document.getElementById('time-display');
         const playerStatus = document.getElementById('player-status'), playOverlay = document.getElementById('play-overlay');
+        
         const paramResolution = document.getElementById('param-resolution'), paramColor = document.getElementById('param-color'), paramColorText = document.getElementById('param-color-text');
         const paramBg = document.getElementById('param-bg'), paramBgText = document.getElementById('param-bg-text'), paramPixel = document.getElementById('param-pixel'), paramAudioCodec = document.getElementById('param-audio-codec');
         const modeButtons = document.querySelectorAll('.mode-btn'), commandText = document.getElementById('ffmpeg-command'), btnCopy = document.getElementById('btn-copy'), copyToast = document.getElementById('copy-toast');
-        const paramBgBlur = document.getElementById('param-bg-blur'), paramBgDim = document.getElementById('param-bg-dim'), paramBgGlow = document.getElementById('param-bg-glow'), paramParticles = document.getElementById('param-particles');
+        
+        const paramBgBlur = document.getElementById('param-bg-blur'), paramBgDim = document.getElementById('param-bg-dim'), paramGlow = document.getElementById('param-glow'), paramParticles = document.getElementById('param-particles');
         const valBgBlur = document.getElementById('val-bg-blur'), valBgDim = document.getElementById('val-bg-dim'), valGlow = document.getElementById('val-glow');
+        
         const videoKeyword = document.getElementById('video-keyword'), btnSearchVideo = document.getElementById('btn-search-video'), btnToggleKeyInput = document.getElementById('btn-toggle-key-input'), apiKeyContainer = document.getElementById('api-key-container'), customApiKey = document.getElementById('custom-api-key'), videoResultsGrid = document.getElementById('video-results-grid'), bgVideoElement = document.getElementById('bg-video-element');
-        const btnAiAnalyze = document.getElementById('btn-ai-analyze'), customApiProvider = document.getElementById('custom-api-provider');
-
-        // Elemen Metadata Tambahan
-        const metaTitle = document.getElementById('meta-title'), metaSinger = document.getElementById('meta-singer'), metaComposer = document.getElementById('meta-composer'), metaAlbum = document.getElementById('meta-album'), metaGenre = document.getElementById('meta-genre'), metaRelease = document.getElementById('meta-release'), metaLyrics = document.getElementById('meta-lyrics');
-        const eduTopic = document.getElementById('edu-topic'), eduCategory = document.getElementById('edu-category');
+        const btnAiAnalyze = document.getElementById('btn-ai-analyze'), aiGeneratedCaption = document.getElementById('ai-generated-caption'), btnCopyCaption = document.getElementById('btn-copy-caption');
+        const btnRecordVideo = document.getElementById('btn-record-video'), recordText = document.getElementById('record-text');
+        const logoText = document.getElementById('logo-text'), logoColor = document.getElementById('logo-color'), logoPosition = document.getElementById('logo-position'), logoSize = document.getElementById('logo-size');
         const tabMusic = document.getElementById('tab-music'), tabEdu = document.getElementById('tab-edu'), contentMusicForm = document.getElementById('content-music-form'), contentEduForm = document.getElementById('content-edu-form');
-        const aiGeneratedCaption = document.getElementById('ai-generated-caption'), btnCopyCaption = document.getElementById('btn-copy-caption');
+        const metaTitle = document.getElementById('meta-title'), metaSinger = document.getElementById('meta-singer'), metaComposer = document.getElementById('meta-composer'), metaAlbum = document.getElementById('meta-album'), metaGenre = document.getElementById('meta-genre'), metaRelease = document.getElementById('meta-release'), metaLyrics = document.getElementById('meta-lyrics');
+        const eduTopic = document.getElementById('edu-topic'), eduCategory = document.getElementById('edu-category'), eduLinksContainer = document.getElementById('edu-links-container');
+        const aiProviderSelect = document.getElementById('ai-provider-select');
+        
+        const canvas = document.getElementById('preview-canvas'), ctx = canvas.getContext('2d');
+        let currentMode = 'line', animationFrameId = null, activeTab = 'music', particles = [];
+        const maxParticles = 60;
 
-        // Pemuatan API Key dan Provider kustom dari LocalStorage
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            const savedProvider = localStorage.getItem('saved_api_provider');
-            if (savedProvider) {
-                customApiProvider.value = savedProvider;
-                const savedKey = localStorage.getItem(`saved_api_key_${savedProvider}`);
-                customApiKey.value = savedKey ? savedKey : '';
-            }
-            updateFfmpegTerminal();
-        });
+        lucide.createIcons();
 
-        // Event listener saat dropdown provider berubah
-        customApiProvider.addEventListener('change', () => {
-            const activeProvider = customApiProvider.value;
-            localStorage.setItem('saved_api_provider', activeProvider);
-            const savedKey = localStorage.getItem(`saved_api_key_${activeProvider}`);
-            customApiKey.value = savedKey ? savedKey : '';
-            customApiKey.placeholder = `Masukkan API Key kustom untuk ${activeProvider}`;
-        });
-
-        // Event listener saat input API key diketik manual
-        customApiKey.addEventListener('input', () => {
-            const activeProvider = customApiProvider.value;
-            const keyValue = customApiKey.value.trim();
-            if (keyValue) {
-                localStorage.setItem(`saved_api_key_${activeProvider}`, keyValue);
-            } else {
-                localStorage.removeItem(`saved_api_key_${activeProvider}`);
-            }
-        });
-
-        // Toggle container Pengaturan API Key
-        btnToggleKeyInput.addEventListener('click', () => {
-            apiKeyContainer.classList.toggle('hidden');
-        });
-
-        // Sinkronisasi Input Warna & Teks Parameter
-        paramColor.addEventListener('input', (e) => { paramColorText.value = e.target.value; updateFfmpegTerminal(); });
-        paramColorText.addEventListener('input', (e) => { if(/^#[0-9A-F]{6}$/i.test(e.target.value)) { paramColor.value = e.target.value; updateFfmpegTerminal(); } });
-        paramBg.addEventListener('input', (e) => { paramBgText.value = e.target.value; updateFfmpegTerminal(); });
-        paramBgText.addEventListener('input', (e) => { if(/^#[0-9A-F]{6}$/i.test(e.target.value)) { paramBg.value = e.target.value; updateFfmpegTerminal(); } });
-
-        // Update Slider Nilai Teks Realtime
-        paramBgBlur.addEventListener('input', (e) => { valBgBlur.textContent = `${e.target.value}px`; });
-        paramBgDim.addEventListener('input', (e) => { valBgDim.textContent = `${e.target.value}%`; });
-        paramBgGlow.addEventListener('input', (e) => { valGlow.textContent = `${e.target.value}px`; });
-
-        // Manajemen Tab Form Berkas Konten
         tabMusic.addEventListener('click', () => {
+            activeTab = 'music';
             tabMusic.className = "px-3 py-1 rounded-md font-medium bg-indigo-600 text-white";
             tabEdu.className = "px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white";
-            contentMusicForm.classList.remove('hidden'); contentEduForm.classList.add('hidden');
+            contentMusicForm.classList.remove('hidden');
+            contentEduForm.classList.add('hidden');
+            drawStaticOrLive(); generateFFmpegCommand();
         });
+
         tabEdu.addEventListener('click', () => {
+            activeTab = 'edu';
             tabEdu.className = "px-3 py-1 rounded-md font-medium bg-indigo-600 text-white";
             tabMusic.className = "px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white";
-            contentEduForm.classList.remove('hidden'); contentMusicForm.classList.add('hidden');
+            contentEduForm.classList.remove('hidden');
+            contentMusicForm.classList.add('hidden');
+            drawStaticOrLive(); generateFFmpegCommand();
         });
 
-        // Update fungsi updateFfmpegTerminal
-		function updateFfmpegTerminal() {
-			const res = paramResolution.value;
-			const mode = document.querySelector('.mode-btn.active').dataset.mode;
-			const color = paramColor.value.replace('#', '0x');
-			const pix = paramPixel.value;
-			const acodec = paramAudioCodec.value;
-			
-			// Gunakan nama file yang diupload
-			let inputSource = "input.mp3";
-			if (window.uploadedAudioFile) {
-				inputSource = `"${window.uploadedAudioFile.name}"`;
-			}
-
-			let filter = `[0:a]showwaves=s=${res}:mode=${mode}:colors=${color},format=${pix}[v]`;
-			if (mode === 'circular') {
-				filter = `[0:a]showwaves=s=${res}:mode=line:colors=${color},format=${pix},edgedetect[v]`;
-			}
-			
-			commandText.textContent = `ffmpeg -i ${inputSource} -filter_complex "${filter}" -map "[v]" -map 0:a -c:v libx264 -c:a ${acodec} output.mp4`;
-		}
-
-        // Event listener untuk perubahan parameter yang memerlukan update terminal
-        paramResolution.addEventListener('change', updateFfmpegTerminal);
-        paramPixel.addEventListener('change', updateFfmpegTerminal);
-        paramAudioCodec.addEventListener('change', updateFfmpegTerminal);
-        
-        modeButtons.forEach(btn => btn.addEventListener('click', (e) => {
-            modeButtons.forEach(b => b.classList.remove('active', 'bg-indigo-600/20', 'text-indigo-400', 'border-indigo-500/30'));
-            modeButtons.forEach(b => b.classList.add('bg-dark-950', 'text-slate-400', 'border-slate-800'));
-            e.target.classList.add('active', 'bg-indigo-600/20', 'text-indigo-400', 'border-indigo-500/30');
-            updateFfmpegTerminal();
-        }));
-
-        // Event listener untuk upload audio (versi lokal tanpa API)
-		audioUpload.addEventListener('change', async (event) => {
-			const file = event.target.files[0];
-			if (!file) return;
-
-			// Validasi tipe file
-			const validExtensions = ['.mp3', '.wav', '.m4a', '.ogg', '.aac'];
-			const fileExt = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
-			
-			if (!validExtensions.includes(fileExt)) {
-				showCustomToast("Tipe file tidak didukung. Gunakan: MP3, WAV, M4A, OGG, atau AAC", "error");
-				audioUpload.value = '';
-				return;
-			}
-
-			// Validasi ukuran (maks 50MB)
-			if (file.size > 50 * 1024 * 1024) {
-				showCustomToast("Ukuran file terlalu besar. Maksimal 50MB", "error");
-				audioUpload.value = '';
-				return;
-			}
-
-			// Tampilkan status loading
-			uploadLabel.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin inline mr-1"></i> Memproses audio...';
-			lucide.createIcons();
-			
-			try {
-				// Hentikan pemutaran yang sedang berjalan
-				if (isPlaying) {
-					stopPlayback();
-				}
-				
-				// Tutup AudioContext lama
-				if (audioContext) {
-					await audioContext.close();
-					audioContext = null;
-				}
-				
-				// Buat AudioContext baru (di-resume nanti saat user interaction)
-				audioContext = new (window.AudioContext || window.webkitAudioContext)();
-				analyser = audioContext.createAnalyser();
-				analyser.fftSize = 256;
-				gainNode = audioContext.createGain();
-				gainNode.gain.value = 0.5;
-				
-				// Baca file sebagai ArrayBuffer
-				const arrayBuffer = await file.arrayBuffer();
-				audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-				duration = audioBuffer.duration;
-				
-				// Simpan file info untuk FFmpeg command
-				window.uploadedAudioFile = file;
-				window.uploadedAudioUrl = URL.createObjectURL(file);
-				
-				// Update UI
-				fileInfo.classList.remove('hidden');
-				fileName.textContent = file.name;
-				fileSize.textContent = (file.size / (1024 * 1024)).toFixed(2) + " MB";
-				uploadLabel.innerHTML = '<i data-lucide="check-circle-2" class="w-4 h-4 inline mr-1"></i> Audio siap!';
-				lucide.createIcons();
-				
-				// Update time display
-				timeDisplay.textContent = `00:00 / ${formatTime(duration)}`;
-				playerStatus.textContent = "Audio Siap";
-				
-				// Update Terminal FFmpeg
-				updateFfmpegTerminal();
-				
-				// Sembunyikan overlay play
-				playOverlay.style.display = 'flex';
-				
-				showCustomToast(`"${file.name}" berhasil dimuat!`, "success");
-				
-			} catch (error) {
-				console.error("Error loading audio:", error);
-				uploadLabel.textContent = "Gagal memuat file!";
-				showCustomToast("Gagal memuat file audio. Pastikan file tidak corrupt.", "error");
-				audioUpload.value = '';
-				fileInfo.classList.add('hidden');
-			} finally {
-				setTimeout(() => {
-					if (uploadLabel.innerHTML.includes('Memproses')) {
-						uploadLabel.innerHTML = '<i data-lucide="upload-cloud" class="w-4 h-4 inline mr-1"></i> Unggah file audio';
-						lucide.createIcons();
-					}
-				}, 2000);
-			}
-		});
-
-		// Fungsi format waktu
-		function formatTime(seconds) {
-			if (isNaN(seconds) || !isFinite(seconds)) return "00:00";
-			const mins = Math.floor(seconds / 60);
-			const secs = Math.floor(seconds % 60);
-			return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-		}
-
-		// Fungsi memulai playback
-		async function startPlayback() {
-			if (!audioBuffer || !audioContext) {
-				showCustomToast("Silakan upload file audio terlebih dahulu", "error");
-				return false;
-			}
-			
-			try {
-				// Resume AudioContext jika suspended (karena kebijakan browser)
-				if (audioContext.state === 'suspended') {
-					await audioContext.resume();
-				}
-				
-				// Buat source baru
-				audioSource = audioContext.createBufferSource();
-				audioSource.buffer = audioBuffer;
-				audioSource.connect(analyser);
-				analyser.connect(gainNode);
-				gainNode.connect(audioContext.destination);
-				
-				// Mulai dari posisi paused
-				const offset = pausedAt || 0;
-				audioSource.start(0, offset);
-				startTime = audioContext.currentTime - offset;
-				isPlaying = true;
-				
-				// Update UI
-				playIcon.classList.add('hidden');
-				pauseIcon.classList.remove('hidden');
-				playerStatus.textContent = "Memutar...";
-				playOverlay.style.display = 'none';
-				
-				// Update timer
-				updateTimerAndWaveform();
-				
-				// Event ketika selesai
-				audioSource.onended = () => {
-					if (isPlaying) {
-						stopPlayback();
-						pausedAt = 0;
-						timeDisplay.textContent = `00:00 / ${formatTime(duration)}`;
-						playerStatus.textContent = "Selesai";
-						playOverlay.style.display = 'flex';
-					}
-				};
-				
-				return true;
-			} catch (error) {
-				console.error("Error starting playback:", error);
-				return false;
-			}
-		}
-
-		// Fungsi menghentikan playback
-		function stopPlayback() {
-			if (audioSource) {
-				try {
-					audioSource.stop();
-				} catch (e) {}
-				audioSource = null;
-			}
-			isPlaying = false;
-			if (animationFrameId) {
-				cancelAnimationFrame(animationFrameId);
-				animationFrameId = null;
-			}
-			playIcon.classList.remove('hidden');
-			pauseIcon.classList.add('hidden');
-		}
-
-		// Fungsi pause playback
-		function pausePlayback() {
-			if (audioSource && isPlaying) {
-				try {
-					pausedAt = audioContext.currentTime - startTime;
-					audioSource.stop();
-					audioSource = null;
-				} catch (e) {}
-				isPlaying = false;
-				playIcon.classList.remove('hidden');
-				pauseIcon.classList.add('hidden');
-				playerStatus.textContent = "Dijeda";
-				if (animationFrameId) {
-					cancelAnimationFrame(animationFrameId);
-					animationFrameId = null;
-				}
-			}
-		}
-
-		// Fungsi toggle play/pause
-		function togglePlayback() {
-			if (!audioBuffer) {
-				showCustomToast("Silakan upload file audio terlebih dahulu", "error");
-				return;
-			}
-			
-			if (isPlaying) {
-				pausePlayback();
-			} else {
-				// Jika sudah selesai (pausedAt mendekati duration)
-				if (pausedAt >= duration - 0.1) {
-					pausedAt = 0;
-				}
-				startPlayback();
-			}
-		}
-
-		// Update timer dan waveform
-		function updateTimerAndWaveform() {
-			if (!isPlaying) return;
-			
-			const currentTime = audioContext.currentTime - startTime;
-			if (currentTime >= duration) {
-				return;
-			}
-			timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
-			
-			animationFrameId = requestAnimationFrame(updateTimerAndWaveform);
-		}
-
-		// Reset file
-		btnReset.addEventListener('click', () => {
-			// Hentikan playback
-			if (isPlaying) {
-				stopPlayback();
-			}
-			
-			// Reset state
-			audioUpload.value = '';
-			fileInfo.classList.add('hidden');
-			uploadLabel.innerHTML = '<i data-lucide="upload-cloud" class="w-4 h-4 inline mr-1"></i> Unggah file audio (.mp3, .wav, .m4a)';
-			lucide.createIcons();
-			
-			// Revoke object URL
-			if (window.uploadedAudioUrl) {
-				URL.revokeObjectURL(window.uploadedAudioUrl);
-				window.uploadedAudioUrl = null;
-			}
-			window.uploadedAudioFile = null;
-			audioBuffer = null;
-			isPlaying = false;
-			pausedAt = 0;
-			duration = 0;
-			
-			// Reset UI
-			playIcon.classList.remove('hidden');
-			pauseIcon.classList.add('hidden');
-			timeDisplay.textContent = "00:00 / 00:00";
-			playerStatus.textContent = "Audio Siap";
-			playOverlay.style.display = 'flex';
-			
-			// Tutup AudioContext
-			if (audioContext) {
-				audioContext.close();
-				audioContext = null;
-				analyser = null;
-			}
-			
-			updateFfmpegTerminal();
-			showCustomToast("Audio direset", "success");
-		});
-
-		// Demo synth (alternatif jika tidak upload file)
-		btnDemo.addEventListener('click', () => {
-			showCustomToast("🎹 Silakan upload file audio MP3/WAV terlebih dahulu untuk memulai", "info");
-		});
-
-		// Event listener tombol play/pause
-		btnTogglePlay.addEventListener('click', togglePlayback);
-
-		// Overlay play
-		playOverlay.addEventListener('click', () => {
-			if (audioBuffer) {
-				togglePlayback();
-			} else {
-				showCustomToast("Silakan upload file audio terlebih dahulu", "error");
-			}
-		});
-
-        // Event listener untuk reset file
-        btnReset.addEventListener('click', () => {
-            if (audioUpload) audioUpload.value = '';
-            fileInfo.classList.add('hidden');
-            uploadLabel.textContent = "Unggah file audio (.mp3, .wav, .m4a)";
-            window.uploadedAudioUrl = null;
-            updateFfmpegTerminal();
+        [logoText, logoColor, logoPosition, logoSize].forEach(el => {
+            el.addEventListener('input', () => { generateFFmpegCommand(); drawStaticOrLive(); });
+            el.addEventListener('change', () => { generateFFmpegCommand(); drawStaticOrLive(); });
         });
 
-        // Event listener demo sederhana
-        btnDemo.addEventListener('click', () => {
-            showCustomToast("Demo mode aktif - silakan upload file audio untuk preview", "success");
+        [metaTitle, metaSinger, metaComposer, metaAlbum, metaGenre, metaRelease, metaLyrics, eduTopic, eduCategory].forEach(el => {
+            el.addEventListener('input', () => { drawStaticOrLive(); });
         });
 
-        // Salin Perintah Terminal FFmpeg
+        const fallbackVideos = [
+            { id: 1, thumb: 'https://images.pexels.com/photos/3100835/pexels-photo-3100835.jpeg?auto=compress&cs=tinysrgb&w=150', video: 'https://player.vimeo.com/external/371433846.sd.mp4?s=236da2f3c054273b97f9040a0e6c1e2d4952c24a&profile_id=164&oauth2_token_id=57447761' },
+            { id: 2, thumb: 'https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=150', video: 'https://player.vimeo.com/external/384761655.sd.mp4?s=382ab303867c2957b494d6e99b0c20171a4f00b1&profile_id=165&oauth2_token_id=57447761' },
+            { id: 3, thumb: 'https://images.pexels.com/photos/220067/pexels-photo-220067.jpeg?auto=compress&cs=tinysrgb&w=150', video: 'https://player.vimeo.com/external/435674703.sd.mp4?s=7b0b979a405fb57896cbda529729a6744c055627&profile_id=165&oauth2_token_id=57447761' }
+        ];
+
+        function loadFallbackVideos() {
+            videoResultsGrid.innerHTML = '';
+            fallbackVideos.forEach(v => {
+                const img = document.createElement('img');
+                img.src = v.thumb;
+                img.className = "w-full h-16 object-cover rounded-lg cursor-pointer hover:ring-2 hover:ring-indigo-500 transition-all border border-slate-800";
+                img.addEventListener('click', () => selectVideoBackground(v.video));
+                videoResultsGrid.appendChild(img);
+            });
+        }
+        loadFallbackVideos();
+
+        function selectVideoBackground(url) {
+            bgVideoElement.src = url; bgVideoElement.load();
+            bgVideoElement.play().then(() => { if(!isPlaying) bgVideoElement.pause(); }).catch(e => {});
+            showCustomToast("Latar belakang video diperbarui!", "success");
+            generateFFmpegCommand();
+        }
+
+        btnToggleKeyInput.addEventListener('click', () => { apiKeyContainer.classList.toggle('hidden'); });
+
+        btnSearchVideo.addEventListener('click', async () => {
+            const query = videoKeyword.value.trim();
+            if(!query) return;
+            btnSearchVideo.disabled = true;
+            btnSearchVideo.innerHTML = `<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i>`;
+            lucide.createIcons();
+
+            const provider = document.querySelector('input[name="api-provider"]:checked').value;
+            const key = customApiKey.value.trim();
+
+            if(!key) {
+                showCustomToast("Mencari menggunakan video default bawaan...");
+                loadFallbackVideos();
+                btnSearchVideo.disabled = false;
+                btnSearchVideo.innerHTML = `<i data-lucide="search" class="w-3.5 h-3.5"></i>`;
+                lucide.createIcons();
+                return;
+            }
+
+            try {
+                let url = provider === 'pexels' 
+                    ? `https://api.pexels.com/videos/search?query=${encodeURIComponent(query)}&per_page=9`
+                    : `https://pixabay.com/api/videos/?key=${key}&q=${encodeURIComponent(query)}&per_page=9`;
+                const headers = provider === 'pexels' ? { 'Authorization': key } : {};
+                const res = await fetch(url, { headers });
+                const data = await res.json();
+                videoResultsGrid.innerHTML = '';
+                if(provider === 'pexels' && data.videos?.length > 0) {
+                    data.videos.forEach(v => {
+                        const file = v.video_files.find(f => f.quality === 'sd' || f.width < 1280) || v.video_files[0];
+                        const img = document.createElement('img'); img.src = v.image;
+                        img.className = "w-full h-16 object-cover rounded-lg cursor-pointer hover:ring-2 hover:ring-indigo-500";
+                        img.addEventListener('click', () => selectVideoBackground(file.link));
+                        videoResultsGrid.appendChild(img);
+                    });
+                } else if (provider === 'pixabay' && data.hits?.length > 0) {
+                    data.hits.forEach(v => {
+                        const videoLink = v.videos.medium.url || v.videos.small.url;
+                        const img = document.createElement('img'); img.src = `https://i.vimeocdn.com/video/${v.picture_id}_200x150.jpg`;
+                        img.className = "w-full h-16 object-cover rounded-lg cursor-pointer hover:ring-2 hover:ring-indigo-500";
+                        img.addEventListener('click', () => selectVideoBackground(videoLink));
+                        videoResultsGrid.appendChild(img);
+                    });
+                } else {
+                    showCustomToast("Tidak ditemukan video. Cek kata kunci.");
+                }
+            } catch(e) {
+                showCustomToast("Kesalahan pencarian video.");
+            } finally {
+                btnSearchVideo.disabled = false; btnSearchVideo.innerHTML = `<i data-lucide="search" class="w-3.5 h-3.5"></i>`;
+                lucide.createIcons();
+            }
+        });
+
+        paramColor.addEventListener('input', (e) => { paramColorText.value = e.target.value; generateFFmpegCommand(); drawStaticOrLive(); });
+        paramColorText.addEventListener('change', (e) => { paramColor.value = e.target.value.startsWith('#') ? e.target.value : '#ffffff'; generateFFmpegCommand(); drawStaticOrLive(); });
+        paramBg.addEventListener('input', (e) => { paramBgText.value = e.target.value; canvas.style.backgroundColor = e.target.value; generateFFmpegCommand(); drawStaticOrLive(); });
+        paramBgText.addEventListener('change', (e) => { paramBg.value = e.target.value.startsWith('#') ? e.target.value : '#020617'; canvas.style.backgroundColor = paramBg.value; generateFFmpegCommand(); drawStaticOrLive(); });
+        paramBgBlur.addEventListener('input', (e) => { valBgBlur.textContent = `${e.target.value}px`; drawStaticOrLive(); });
+        paramBgDim.addEventListener('input', (e) => { valBgDim.textContent = `${e.target.value}%`; drawStaticOrLive(); });
+        paramGlow.addEventListener('input', (e) => { valGlow.textContent = `${e.target.value}px`; drawStaticOrLive(); });
+
+        modeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modeButtons.forEach(b => {
+                    b.classList.remove('active', 'bg-indigo-600/20', 'text-indigo-400', 'border-indigo-500/30');
+                    b.classList.add('bg-dark-950', 'text-slate-400', 'border-slate-800');
+                });
+                btn.classList.add('active', 'bg-indigo-600/20', 'text-indigo-400', 'border-indigo-500/30');
+                btn.classList.remove('bg-dark-950', 'text-slate-400', 'border-slate-800');
+                currentMode = btn.getAttribute('data-mode');
+                generateFFmpegCommand(); drawStaticOrLive();
+            });
+        });
+
+        [paramResolution, paramPixel, paramAudioCodec].forEach(el => {
+            if (el) { el.addEventListener('change', () => { generateFFmpegCommand(); adjustCanvasResolution(); drawStaticOrLive(); }); }
+        });
+
+        function adjustCanvasResolution() {
+            const [width, height] = paramResolution.value.split('x').map(Number);
+            canvas.width = width; canvas.height = height;
+            const container = document.getElementById('canvas-container');
+            container.className = width < height 
+                ? "relative w-full aspect-[9/16] max-h-[500px] rounded-xl overflow-hidden border border-slate-800 bg-dark-950 shadow-inner flex items-center justify-center"
+                : "relative w-full aspect-video rounded-xl overflow-hidden border border-slate-800 bg-dark-950 shadow-inner flex items-center justify-center";
+        }
+        adjustCanvasResolution();
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser(); analyser.fftSize = 1024;
+                gainNode = audioContext.createGain(); gainNode.connect(audioContext.destination);
+            }
+            if (audioContext.state === 'suspended') { audioContext.resume(); }
+        }
+
+        function drawCanvasOverlays() {
+            const w = canvas.width, h = canvas.height;
+            const lText = logoText.value.trim();
+            if (lText !== "") {
+                ctx.save(); ctx.fillStyle = logoColor.value;
+                const size = parseInt(logoSize.value);
+                ctx.font = `bold ${size}px 'Plus Jakarta Sans', sans-serif`;
+                let x = 30, y = 30 + size;
+                if (logoPosition.value === 'top-right') { x = w - ctx.measureText(lText).width - 30; }
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.75)'; ctx.shadowBlur = 6; ctx.fillText(lText, x, y); ctx.restore();
+            }
+
+            ctx.save();
+            const cardWidth = w < h ? w - 40 : 380, cardHeight = activeTab === 'music' ? 220 : 180;
+            const boxX = 20, boxY = h - cardHeight - 20;
+
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.65)'; ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.roundRect(boxX, boxY, cardWidth, cardHeight, 16); ctx.fill(); ctx.stroke();
+
+            if (activeTab === 'music') {
+                ctx.fillStyle = '#ffffff'; ctx.font = "bold 16px 'Plus Jakarta Sans', sans-serif";
+                ctx.fillText(metaTitle.value || "Untitled Track", boxX + 20, boxY + 35);
+                ctx.fillStyle = '#94a3b8'; ctx.font = "500 12px 'Plus Jakarta Sans', sans-serif";
+                ctx.fillText(`Penyanyi: ${metaSinger.value || "-"}`, boxX + 20, boxY + 58);
+                ctx.fillText(`Komposer: ${metaComposer.value || "-"}`, boxX + 20, boxY + 76);
+                ctx.fillStyle = '#64748b'; ctx.font = "italic 11px 'Plus Jakarta Sans', sans-serif";
+                ctx.fillText(`Album: ${metaAlbum.value || "-"}  |  Genre: ${metaGenre.value || "-"} (${metaRelease.value || "2026"})`, boxX + 20, boxY + 98);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)'; ctx.beginPath(); ctx.moveTo(boxX + 20, boxY + 115); ctx.lineTo(boxX + cardWidth - 20, boxY + 115); ctx.stroke();
+                ctx.fillStyle = '#a5b4fc'; ctx.font = "600 13px 'Plus Jakarta Sans', sans-serif";
+                wrapText(ctx, metaLyrics.value || "Lirik lagu akan muncul di sini saat AI bekerja...", boxX + 20, boxY + 140, 18, cardWidth - 40);
+            } else {
+                ctx.fillStyle = '#818cf8'; ctx.font = "800 10px 'Plus Jakarta Sans', sans-serif";
+                ctx.fillText((eduCategory.value || "Kategori").toUpperCase(), boxX + 20, boxY + 30);
+                ctx.fillStyle = '#ffffff'; ctx.font = "bold 15px 'Plus Jakarta Sans', sans-serif";
+                ctx.fillText(eduTopic.value || "Topik Pembahasan", boxX + 20, boxY + 52);
+                ctx.fillStyle = '#e2e8f0'; ctx.font = "bold 11px 'Plus Jakarta Sans', sans-serif";
+                ctx.fillText("Situs & Forum Referensi:", boxX + 20, boxY + 80);
+                const linkInputs = eduLinksContainer.querySelectorAll('.flex');
+                let startY = boxY + 105;
+                linkInputs.forEach((item, index) => {
+                    if (index > 2) return;
+                    const inputs = item.querySelectorAll('input');
+                    const siteName = inputs[0].value || "Web", siteUrl = inputs[1].value || "";
+                    ctx.fillStyle = '#a5b4fc'; ctx.font = "600 11px 'JetBrains Mono', monospace";
+                    ctx.fillText(`• ${siteName}`, boxX + 20, startY);
+                    ctx.fillStyle = '#64748b'; ctx.font = "10px 'JetBrains Mono', monospace";
+                    ctx.fillText(`(${siteUrl})`, boxX + 20 + ctx.measureText(`• ${siteName}`).width + 8, startY);
+                    startY += 20;
+                });
+            }
+            ctx.restore();
+        }
+
+        function wrapText(context, text, x, y, lineHeight, maxWidth) {
+            const words = text.split(' '); let line = ''; let currentY = y;
+            for (let n = 0; n < words.length; n++) {
+                let testLine = line + words[n] + ' ';
+                if (context.measureText(testLine).width > maxWidth && n > 0) {
+                    context.fillText(line, x, currentY); line = words[n] + ' '; currentY += lineHeight;
+                } else { line = testLine; }
+            }
+            context.fillText(line, x, currentY);
+        }
+
+        function generateFFmpegCommand() {
+            const res = paramResolution.value, mode = currentMode === 'circular' ? 'cline' : currentMode;
+            let rawColor = paramColorText.value, bgColor = paramBgText.value;
+            const pixelFormat = paramPixel?.value || 'yuv420p', audioCodec = paramAudioCodec?.value || 'copy';
+            let ffmpegColor = rawColor.startsWith('#') ? '0x' + rawColor.substring(1) : rawColor;
+            let ffmpegBg = bgColor.startsWith('#') ? '0x' + bgColor.substring(1) : bgColor;
+            let extInput = audioUpload.files?.[0]?.name.replace(/\s+/g, '_') || 'input.mp3';
+
+            let drawTextFilter = '';
+            if(logoText.value.trim() !== '') {
+                drawTextFilter = `,drawtext=text='${logoText.value.trim()}':x=${logoPosition.value === 'top-left' ? '30' : 'w-tw-30'}:y=30:fontsize=${logoSize.value}:fontcolor=${logoColor.value.replace('#', '0x')}:shadowcolor=black:shadowx=2:shadowy=2`;
+            }
+
+            if (bgVideoElement.src && !bgVideoElement.paused) {
+                commandText.textContent = `ffmpeg -i background.mp4 -i ${extInput} -filter_complex "[1:a]showwaves=s=${res}:mode=${mode}:colors=${ffmpegColor},format=${pixelFormat}[wave];[0:v]scale=${res.replace('x', ':')}:force_original_aspect_ratio=decrease,pad=${res.replace('x', ':')}:(ow-iw)/2:(oh-ih)/2,gblur=sigma=${paramBgBlur.value}[bg];[bg][wave]overlay=shortest=1${drawTextFilter}[v]" -map "[v]" -map 1:a -c:v libx264 -c:a ${audioCodec} output.mp4`;
+                return;
+            }
+            commandText.textContent = `ffmpeg -i ${extInput} -filter_complex "[0:a]showwaves=s=${res}:mode=${mode}:colors=${ffmpegColor},${bgColor !== '#020617' ? `drawbox=color=${ffmpegBg}:t=fill,` : ''}format=${pixelFormat}${drawTextFilter}[v]" -map "[v]" -map 0:a -c:v libx264 -c:a ${audioCodec} output.mp4`;
+        }
+
+        function playDemoSynthesizer() {
+            initAudio(); stopAudio();
+            playOverlay.classList.add('opacity-0', 'pointer-events-none');
+            playerStatus.textContent = "Memutar Demo Synth"; playerStatus.className = "text-xs text-indigo-400 bg-indigo-950/50 border border-indigo-900/40 px-3 py-1 rounded-lg font-medium";
+            isPlaying = true; btnTogglePlay.disabled = false; setPlayButtonState(true);
+            if(bgVideoElement.src) bgVideoElement.play().catch(e => {});
+
+            const notes = [130.81, 146.83, 164.81, 196.00, 220.00, 261.63]; let noteIdx = 0;
+            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+
+            function triggerOscillator() {
+                if (!isPlaying) return;
+                const osc = audioContext.createOscillator(), osc2 = audioContext.createOscillator(), nodeGain = audioContext.createGain();
+                osc.type = 'sawtooth'; osc2.type = 'sine';
+                osc.frequency.setValueAtTime(notes[noteIdx], audioContext.currentTime);
+                osc2.frequency.setValueAtTime(notes[noteIdx] * 2, audioContext.currentTime);
+                noteIdx = Math.floor(Math.random() * notes.length);
+                nodeGain.gain.setValueAtTime(0.18, audioContext.currentTime);
+                nodeGain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.4);
+                osc.connect(nodeGain); osc2.connect(nodeGain); nodeGain.connect(analyser); analyser.connect(gainNode);
+                osc.start(); osc2.start(); osc.stop(audioContext.currentTime + 0.45); osc2.stop(audioContext.currentTime + 0.45);
+                demoOscillators.push(osc, osc2);
+                demoOscillatorInterval = setTimeout(triggerOscillator, 200);
+            }
+            triggerOscillator(); initParticles(); animateWaveform();
+            duration = 30; startTime = audioContext.currentTime; updateTimerLoop();
+        }
+
+        audioUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            stopAudio(); initAudio();
+            fileName.textContent = file.name; fileSize.textContent = (file.size / (1024 * 1024)).toFixed(2) + " MB";
+            uploadLabel.textContent = "Berhasil Memuat File!"; fileInfo.classList.remove('hidden'); playOverlay.classList.add('opacity-0', 'pointer-events-none');
+            playerStatus.textContent = "Memproses..."; playerStatus.className = "text-xs text-amber-400 bg-amber-950/30 px-3 py-1 rounded-lg";
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                audioContext.decodeAudioData(evt.target.result, function(buffer) {
+                    audioBuffer = buffer; duration = buffer.duration;
+                    playerStatus.textContent = "Audio Terpasang!"; playerStatus.className = "text-xs text-emerald-400 bg-emerald-950/40 px-3 py-1 rounded-lg";
+                    updateTimerDisplay(0, duration); initParticles(); drawStaticWaveform(); generateFFmpegCommand();
+                }, function(err) { showCustomToast("Gagal membaca audio."); });
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        btnReset.addEventListener('click', (e) => {
+            e.stopPropagation(); audioUpload.value = ''; audioBuffer = null; fileInfo.classList.add('hidden');
+            uploadLabel.textContent = "Unggah file audio Anda (.mp3, .wav, .m4a)"; playOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            stopAudio(); generateFFmpegCommand(); ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        btnDemo.addEventListener('click', (e) => { e.preventDefault(); playDemoSynthesizer(); });
+        playOverlay.addEventListener('click', () => { if(audioBuffer) playBufferAudio(); else playDemoSynthesizer(); });
+
+        function playBufferAudio() {
+            if(!audioBuffer) return;
+            initAudio(); stopAudio();
+            isPlaying = true; setPlayButtonState(true);
+            playerStatus.textContent = "Memutar File Audio"; playerStatus.className = "text-xs text-emerald-400 bg-emerald-950/40 px-3 py-1 rounded-lg";
+            if(bgVideoElement.src) bgVideoElement.play().catch(e => {});
+
+            audioSource = audioContext.createBufferSource(); audioSource.buffer = audioBuffer;
+            audioSource.connect(analyser); analyser.connect(gainNode);
+            startTime = audioContext.currentTime - pausedAt; audioSource.start(0, pausedAt);
+            initParticles(); animateWaveform(); updateTimerLoop();
+            audioSource.onended = () => { if (isPlaying && (audioContext.currentTime - startTime) >= duration - 0.1) stopAudio(); };
+        }
+
+        function stopAudio() {
+            isPlaying = false; setPlayButtonState(false);
+            if (audioSource) { try { audioSource.stop(); } catch(e) {} audioSource = null; }
+            if (demoOscillatorInterval) { clearTimeout(demoOscillatorInterval); demoOscillatorInterval = null; }
+            demoOscillators.forEach(osc => { try { osc.stop(); } catch(e) {} }); demoOscillators = [];
+            if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null; }
+            bgVideoElement.pause(); pausedAt = 0;
+            if(audioBuffer) {
+                playerStatus.textContent = "Dipause"; playerStatus.className = "text-xs text-slate-400 bg-slate-800 px-3 py-1 rounded-lg";
+                drawStaticWaveform();
+            } else {
+                playerStatus.textContent = "Audio Siap"; playerStatus.className = "text-xs text-slate-400 bg-slate-800 px-3 py-1 rounded-lg";
+            }
+            if (isRecording) stopRecordingVideo();
+        }
+
+        function pauseAudio() {
+            if (!isPlaying) return;
+            isPlaying = false; setPlayButtonState(false); bgVideoElement.pause();
+            if (audioSource) { pausedAt = audioContext.currentTime - startTime; try { audioSource.stop(); } catch(e) {} audioSource = null; }
+            if (demoOscillatorInterval) { clearTimeout(demoOscillatorInterval); demoOscillatorInterval = null; }
+            if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null; }
+            playerStatus.textContent = "Dipause"; playerStatus.className = "text-xs text-slate-400 bg-slate-800 px-3 py-1 rounded-lg";
+        }
+
+        btnTogglePlay.addEventListener('click', () => { if (isPlaying) pauseAudio(); else { if (audioBuffer) playBufferAudio(); else playDemoSynthesizer(); } });
+
+        function setPlayButtonState(playing) {
+            if (playing) { playIcon.classList.add('hidden'); pauseIcon.classList.remove('hidden'); }
+            else { playIcon.classList.remove('hidden'); pauseIcon.classList.add('hidden'); }
+        }
+
+        function updateTimerLoop() {
+            if (!isPlaying) return;
+            let elapsed = audioBuffer ? audioContext.currentTime - startTime : audioContext.currentTime - startTime;
+            if (audioBuffer && elapsed > duration) elapsed = duration;
+            updateTimerDisplay(elapsed, duration); requestAnimationFrame(updateTimerLoop);
+        }
+
+        function updateTimerDisplay(current, total) {
+            const curMin = Math.floor(current / 60).toString().padStart(2, '0'), curSec = Math.floor(current % 60).toString().padStart(2, '0');
+            const totMin = Math.floor(total / 60).toString().padStart(2, '0'), totSec = Math.floor(total % 60).toString().padStart(2, '0');
+            timeDisplay.textContent = `${curMin}:${curSec} / ${totMin}:${totSec}`;
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < maxParticles; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 2 + 1,
+                    speedY: Math.random() * -0.5 - 0.2, speedX: (Math.random() - 0.5) * 0.3, alpha: Math.random() * 0.5 + 0.2
+                });
+            }
+        }
+
+        function updateAndDrawParticles(audioAmplitude) {
+            if (!paramParticles.checked) return;
+            ctx.fillStyle = `rgba(255, 255, 255, 0.4)`;
+            particles.forEach(p => {
+                const multiplier = 1 + (audioAmplitude / 128.0) * 1.5;
+                p.y += p.speedY * multiplier; p.x += p.speedX;
+                if (p.y < 0) { p.y = canvas.height; p.x = Math.random() * canvas.width; }
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size * (multiplier > 1.2 ? multiplier : 1), 0, Math.PI * 2); ctx.fill();
+            });
+        }
+
+        function drawBackground() {
+            const w = canvas.width, h = canvas.height;
+            ctx.fillStyle = paramBgText.value; ctx.fillRect(0, 0, w, h);
+            if (bgVideoElement.src && !bgVideoElement.paused) {
+                ctx.save();
+                if (parseInt(paramBgBlur.value) > 0) ctx.filter = `blur(${paramBgBlur.value}px)`;
+                const vWidth = bgVideoElement.videoWidth || 1280, vHeight = bgVideoElement.videoHeight || 720;
+                const ratio = Math.max(w / vWidth, h / vHeight);
+                const nW = vWidth * ratio, nH = vHeight * ratio;
+                ctx.drawImage(bgVideoElement, (w - nW)/2, (h - nH)/2, nW, nH); ctx.restore();
+                const dim = 1 - (parseInt(paramBgDim.value) / 100);
+                if (dim > 0) { ctx.fillStyle = `rgba(0, 0, 0, ${dim})`; ctx.fillRect(0, 0, w, h); }
+            }
+        }
+
+        function drawStaticWaveform() {
+            if (!audioBuffer) return;
+            const [w, h] = paramResolution.value.split('x').map(Number);
+            canvas.width = w; canvas.height = h;
+            drawBackground();
+            const colorValue = paramColorText.value;
+            ctx.strokeStyle = colorValue; ctx.fillStyle = colorValue; ctx.lineWidth = 3;
+            const glow = parseInt(paramGlow.value);
+            if (glow > 0) { ctx.shadowBlur = glow; ctx.shadowColor = colorValue; } else { ctx.shadowBlur = 0; }
+            const leftChannel = audioBuffer.getChannelData(0), step = Math.ceil(leftChannel.length / w), amp = h / 2.5;
+
+            ctx.beginPath();
+            if (currentMode === 'line') {
+                ctx.moveTo(0, h / 2);
+                for (let i = 0; i < w; i++) {
+                    let min = 1.0;
+                    for (let j = 0; j < step; j++) { const d = leftChannel[(i * step) + j]; if (d < min) min = d; }
+                    ctx.lineTo(i, (1 + min) * amp + (h/2 - amp));
+                }
+                ctx.stroke();
+            } else if (currentMode === 'cline') {
+                for (let i = 0; i < w; i += 3) {
+                    let m = 0;
+                    for (let j = 0; j < step; j++) { const d = Math.abs(leftChannel[(i * step) + j]); if (d > m) m = d; }
+                    ctx.fillRect(i, h/2 - m * amp * 1.2, 2.5, m * amp * 2.4);
+                }
+            } else if (currentMode === 'circular') {
+                const cX = w / 2, cY = h / 2, bR = Math.min(w, h) * 0.22, nP = 180, aS = (Math.PI * 2) / nP;
+                for (let i = 0; i < nP; i++) {
+                    const angle = i * aS, sIdx = Math.floor((i / nP) * leftChannel.length);
+                    const r = bR + Math.abs(leftChannel[sIdx]) * bR * 1.5;
+                    const x = cX + Math.cos(angle) * r, y = cY + Math.sin(angle) * r;
+                    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                }
+                ctx.closePath(); ctx.stroke();
+            }
+            ctx.shadowBlur = 0; updateAndDrawParticles(40); drawCanvasOverlays();
+        }
+
+        function drawStaticOrLive() {
+            if (isPlaying) return;
+            if (audioBuffer) drawStaticWaveform();
+            else {
+                const w = canvas.width, h = canvas.height; drawBackground();
+                ctx.strokeStyle = paramColorText.value; ctx.lineWidth = 3;
+                const glow = parseInt(paramGlow.value);
+                if (glow > 0) { ctx.shadowBlur = glow; ctx.shadowColor = paramColorText.value; } else { ctx.shadowBlur = 0; }
+                if (currentMode === 'circular') {
+                    ctx.beginPath(); ctx.arc(w/2, h/2, Math.min(w, h) * 0.22, 0, Math.PI * 2); ctx.stroke();
+                } else {
+                    ctx.beginPath(); ctx.moveTo(0, h/2);
+                    for(let i=0; i<w; i++) { ctx.lineTo(i, (h/2) + Math.sin(i * 0.02) * 30); }
+                    ctx.stroke();
+                }
+                ctx.shadowBlur = 0; updateAndDrawParticles(0); drawCanvasOverlays();
+            }
+        }
+
+        function animateWaveform() {
+            if (!isPlaying) return;
+            animationFrameId = requestAnimationFrame(animateWaveform);
+            const len = analyser.frequencyBinCount, data = new Uint8Array(len);
+            analyser.getByteTimeDomainData(data);
+            const w = canvas.width, h = canvas.height; drawBackground();
+            const col = paramColorText.value; ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 3;
+            const glow = parseInt(paramGlow.value);
+            if (glow > 0) { ctx.shadowBlur = glow; ctx.shadowColor = col; } else { ctx.shadowBlur = 0; }
+            const sW = w / len;
+
+            let sum = 0;
+            for(let i=0; i<len; i++) sum += Math.abs(data[i] - 128);
+            const avg = sum / len;
+
+            if (currentMode === 'line') {
+                ctx.beginPath(); let x = 0;
+                for (let i = 0; i < len; i++) {
+                    const y = ((data[i] / 128.0) * h) / 2;
+                    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                    x += sW;
+                }
+                ctx.lineTo(w, h / 2); ctx.stroke();
+            } else if (currentMode === 'cline') {
+                let x = 0;
+                for (let i = 0; i < len; i += 4) {
+                    const ampVal = Math.abs((data[i] - 128) / 128.0) * (h / 2.2);
+                    ctx.fillRect(x, (h / 2) - ampVal, 3, ampVal * 2); x += sW * 4;
+                }
+            } else if (currentMode === 'circular') {
+                const cX = w / 2, cY = h / 2, bR = Math.min(w, h) * (w < h ? 0.35 : 0.22);
+                ctx.beginPath();
+                for (let i = 0; i < len; i += 3) {
+                    const angle = (i / len) * Math.PI * 2, r = bR + ((data[i] - 128) / 128.0) * bR * 0.9;
+                    const x = cX + Math.cos(angle) * r, y = cY + Math.sin(angle) * r;
+                    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                }
+                ctx.closePath(); ctx.stroke();
+            }
+            ctx.shadowBlur = 0; updateAndDrawParticles(avg); drawCanvasOverlays();
+        }
+
+        btnRecordVideo.addEventListener('click', () => { if (isRecording) stopRecordingVideo(); else startRecordingVideo(); });
+
+        function startRecordingVideo() {
+            initAudio(); stopAudio(); isRecording = true; recordedChunks = [];
+            btnRecordVideo.className = "bg-red-700 text-white px-4 py-2 rounded-lg text-xs font-bold ring-4 ring-red-500/30";
+            recordText.textContent = "Menghentikan & Menyimpan (0s)";
+            if (audioBuffer) playBufferAudio(); else playDemoSynthesizer();
+
+            const cStream = canvas.captureStream(30), dest = audioContext.createMediaStreamDestination();
+            gainNode.disconnect(); gainNode.connect(dest); gainNode.connect(audioContext.destination);
+            const combined = new MediaStream([...cStream.getVideoTracks(), ...dest.stream.getAudioTracks()]);
+
+            let opts = { mimeType: 'video/webm;codecs=vp9,opus' };
+            if (!MediaRecorder.isTypeSupported(opts.mimeType)) opts = { mimeType: 'video/webm;codecs=vp8,opus' };
+            if (!MediaRecorder.isTypeSupported(opts.mimeType)) opts = { mimeType: 'video/webm' };
+
+            mediaRecorder = new MediaRecorder(combined, opts);
+            mediaRecorder.ondataavailable = (e) => { if (e.data?.size > 0) recordedChunks.push(e.data); };
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' }), url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.style.display = 'none'; a.href = url; a.download = `ffmpeg_${Date.now()}.webm`;
+                document.body.appendChild(a); a.click();
+                setTimeout(() => { document.body.removeChild(a); window.URL.revokeObjectURL(url); }, 100);
+                showCustomToast("Download video berhasil!", "success");
+                btnRecordVideo.className = "bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-lg shadow-red-500/10";
+                recordText.textContent = "Rekam & Download Video"; isRecording = false;
+            };
+            mediaRecorder.start();
+            let recSec = 0;
+            const recTimer = setInterval(() => { if(!isRecording) { clearInterval(recTimer); return; } recSec++; recordText.textContent = `Menghentikan & Menyimpan (${recSec}s)`; }, 1000);
+        }
+
+        function stopRecordingVideo() { if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop(); stopAudio(); }
+
+        // PEMANGGILAN API BACKEND SECARA AMAN (Vercel Serverless Multi-Engine)
+        btnAiAnalyze.addEventListener('click', async () => {
+            let activeName = audioUpload.files?.[0]?.name || "Lagu Estetik Lofi";
+            const selectedProvider = aiProviderSelect.value; // Membaca provider pilihan user
+
+            btnAiAnalyze.disabled = true;
+            btnAiAnalyze.innerHTML = `<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Memproses...`;
+            lucide.createIcons();
+
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ activeName, provider: selectedProvider })
+                });
+
+                const resData = await response.json();
+                if (!response.ok) {
+                    throw new Error(resData.error || `HTTP Error ${response.status}`);
+                }
+
+                const cleanedJson = resData.data.replace(/```json/g, '').replace(/```/g, '').trim();
+                const data = JSON.parse(cleanedJson);
+
+                if (data.keyword) { videoKeyword.value = data.keyword; }
+                if (data.hexColor) { paramColor.value = data.hexColor; paramColorText.value = data.hexColor; }
+                if (data.caption) { aiGeneratedCaption.value = data.caption; }
+
+                // Jika Pexels/Pixabay dikonfigurasi, otomatis perbarui grid pencarian latar belakang
+                if (resData.pexelsVideos && resData.pexelsVideos.length > 0) {
+                    videoResultsGrid.innerHTML = '';
+                    resData.pexelsVideos.forEach(v => {
+                        const img = document.createElement('img');
+                        img.src = v.image;
+                        img.className = "w-full h-16 object-cover rounded-lg cursor-pointer hover:ring-2 hover:ring-indigo-500 transition-all border border-slate-800";
+                        img.addEventListener('click', () => selectVideoBackground(v.videoUrl));
+                        videoResultsGrid.appendChild(img);
+                    });
+                    // Pilih video pertama secara otomatis sebagai default
+                    selectVideoBackground(resData.pexelsVideos[0].videoUrl);
+                } else if (data.keyword) {
+                    // Jika API serverless kosong dari kunci video, lakukan pencarian browser-side standar
+                    btnSearchVideo.click();
+                }
+
+                if (data.contentType === 'edu') {
+                    activeTab = 'edu'; tabEdu.click();
+                    if (data.eduData) {
+                        eduTopic.value = data.eduData.topic || ""; eduCategory.value = data.eduData.category || "";
+                        eduLinksContainer.innerHTML = '';
+                        if (data.eduData.links?.length > 0) {
+                            data.eduData.links.forEach(link => {
+                                const flexDiv = document.createElement('div'); flexDiv.className = "flex gap-2 items-center";
+                                flexDiv.innerHTML = `
+                                    <input type="text" placeholder="Nama" value="${link.name}" class="w-1/3 bg-dark-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none" />
+                                    <input type="text" placeholder="URL" value="${link.url}" class="w-2/3 bg-dark-950 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none" />
+                                `;
+                                eduLinksContainer.appendChild(flexDiv);
+                            });
+                        }
+                    }
+                } else {
+                    activeTab = 'music'; tabMusic.click();
+                    if (data.musicData) {
+                        metaTitle.value = data.musicData.title || ""; metaSinger.value = data.musicData.singer || "";
+                        metaComposer.value = data.musicData.composer || ""; metaAlbum.value = data.musicData.album || "";
+                        metaGenre.value = data.musicData.genre || ""; metaRelease.value = data.musicData.releaseYear || "";
+                        metaLyrics.value = data.musicData.lyrics || "";
+                    }
+                }
+                showCustomToast(`Analisis ${selectedProvider.toUpperCase()} Berhasil!`, "success");
+                drawStaticOrLive(); generateFFmpegCommand();
+            } catch (error) {
+                console.error(error);
+                showCustomToast(error.message || `Gagal menghubungi API Serverless dengan ${selectedProvider.toUpperCase()}.`);
+                tabMusic.click(); videoKeyword.value = "ambient space lofi"; loadFallbackVideos();
+            } finally {
+                btnAiAnalyze.disabled = false;
+                btnAiAnalyze.innerHTML = `<i data-lucide="wand2" class="w-3.5 h-3.5"></i> Jalankan Analisis AI Terenkripsi`;
+                lucide.createIcons();
+            }
+        });
+
+        btnCopyCaption.addEventListener('click', () => { aiGeneratedCaption.select(); document.execCommand('copy'); showCustomToast("Takarir disalin!", "success"); });
         btnCopy.addEventListener('click', () => {
             const range = document.createRange(); range.selectNode(commandText);
             window.getSelection().removeAllRanges(); window.getSelection().addRange(range);
@@ -932,8 +1181,6 @@
             window.getSelection().removeAllRanges();
         });
 
-        btnCopyCaption.addEventListener('click', () => { aiGeneratedCaption.select(); document.execCommand('copy'); showCustomToast("Takarir disalin!", "success"); });
-
         function showCustomToast(message, type = "error") {
             const toast = document.createElement('div');
             toast.className = `fixed bottom-5 right-5 z-50 ${type === "success" ? "bg-emerald-600/90 border-emerald-500/30" : "bg-red-600/90 border-red-500/30"} text-white px-5 py-3 rounded-xl shadow-2xl border text-xs font-semibold max-w-sm transition-all`;
@@ -941,73 +1188,7 @@
             setTimeout(() => { toast.classList.add('opacity-0'); setTimeout(() => toast.remove(), 500); }, 4000);
         }
 
-        // Integrasi Request AI Backend ke file analyze.js
-        btnAiAnalyze.addEventListener('click', async () => {
-            const fileUploaded = audioUpload.files[0];
-            let activeAudioName = fileUploaded ? fileUploaded.name : "Aura Nostalgia Synthwave Mix.mp3";
-            
-            btnAiAnalyze.disabled = true;
-            btnAiAnalyze.innerHTML = `<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Memproses Analisis AI...`;
-            lucide.createIcons();
-
-            // Ambil provider & manual key kustom dari UI untuk dilempar ke Vercel Function
-            const activeProvider = customApiProvider.value;
-            const manualKey = customApiKey.value.trim();
-
-            try {
-                const response = await fetch('/api/analyze', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        activeName: activeAudioName,
-                        customProvider: activeProvider,
-                        customApiKeyManual: manualKey
-                    })
-                });
-
-                if (!response.ok) throw new Error("Terjadi kesalahan server.");
-                const result = await response.json();
-                
-                if(result.data) {
-                    if (result.data.contentType === 'music' || result.data.musicData) {
-                        tabMusic.click();
-                        const m = result.data.musicData || {};
-                        if(m.title) metaTitle.value = m.title;
-                        if(m.singer) metaSinger.value = m.singer;
-                        if(m.composer) metaComposer.value = m.composer;
-                        if(m.album) metaAlbum.value = m.album;
-                        if(m.genre) metaGenre.value = m.genre;
-                        if(m.releaseYear) metaRelease.value = m.releaseYear;
-                        if(m.lyrics) metaLyrics.value = m.lyrics;
-                    } else if (result.data.contentType === 'edu' || result.data.eduData) {
-                        tabEdu.click();
-                        const ed = result.data.eduData || {};
-                        if(ed.topic) eduTopic.value = ed.topic;
-                        if(ed.category) eduCategory.value = ed.category;
-                    }
-
-                    if(result.data.hexColor) {
-                        paramColorText.value = result.data.hexColor;
-                        paramColor.value = result.data.hexColor;
-                        updateFfmpegTerminal();
-                    }
-                    if(result.data.caption) {
-                        aiGeneratedCaption.value = result.data.caption;
-                    }
-                    if(result.data.keyword) {
-                        videoKeyword.value = result.data.keyword;
-                        btnSearchVideo.click();
-                    }
-                    showCustomToast("Analisis AI Berhasil Terbaca!", "success");
-                }
-            } catch (err) {
-                showCustomToast("Gagal mengambil data dari endpoint asisten AI.");
-            } finally {
-                btnAiAnalyze.disabled = false;
-                btnAiAnalyze.innerHTML = `<i data-lucide="wand2" class="w-3.5 h-3.5"></i> Jalankan Analisis AI Terenkripsi`;
-                lucide.createIcons();
-            }
-        });
+        window.onload = function() { generateFFmpegCommand(); drawStaticOrLive(); }
     </script>
 </body>
 </html>
