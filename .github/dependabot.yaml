@@ -1,0 +1,21 @@
+version: 2
+updates:
+  # Memantau dan memperbarui pustaka Node.js (untuk Serverless Functions Multi-Engine)
+  - package-ecosystem: "npm"
+    directory: "/" 
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "javascript"
+
+  # Memantau dan memperbarui versi GitHub Actions yang Anda gunakan
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
