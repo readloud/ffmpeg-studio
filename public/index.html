@@ -4,11 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FFmpeg Studio AI | Content Producer</title>
-    <!-- Vercel Web Analytics -->
-    <script>
-        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-    </script>
-    <script defer src="/_vercel/insights/script.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -28,9 +23,9 @@
             }
         }
     </script>
-	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-	<script src="https://unpkg.com/lucide@latest"></script>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -53,11 +48,6 @@
             background: #4f46e5;
         }
     </style>
-    <!-- Vercel Speed Insights -->
-    <script type="module">
-        import { injectSpeedInsights } from 'https://cdn.jsdelivr.net/npm/@vercel/speed-insights@2.0.0/dist/index.mjs';
-        injectSpeedInsights();
-    </script>
 </head>
 <body class="bg-dark-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
 
@@ -103,7 +93,6 @@
 
                         <div class="flex items-center justify-between text-xs text-slate-400">
                             <span>Ingin mencoba instan?</span>
-							
                             <button id="btn-demo" class="text-indigo-400 hover:text-indigo-300 font-semibold underline flex items-center gap-1">
                                 🎹 Putar Demo Synth
                             </button>
@@ -189,8 +178,7 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] text-slate-400 font-semibold uppercase mb-1">API Key
-									</label>
+                                    <label class="block text-[10px] text-slate-400 font-semibold uppercase mb-1">API Key</label>
                                     <input type="password" id="custom-api-key" placeholder="Masukkan API Key manual" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
                                 </div>
                             </div>
@@ -326,20 +314,20 @@
                             </div>
                         </div>
                     </div>
-					<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500 space-y-1">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500 space-y-1">
                         <p>© 2026<a class="text-light-gray2" href="https://readloud.github.io/"> FFmpeg Studio AI</a> <a class="text-light-gray2" href="https://gemini.google.com/app"> - Powered by Gemini AI Assistant</a> </p>
                     </div>
-					<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500 space-y-2">
-					        <p><a href="https://github.com/readloud" ><i class="fab fa-github tz-icon-color"></i>  </a> 
-							<a href="https://readloud.slack.com/archives/C036G9A08CE" ><i class="fab fa-slack tz-icon-color"></i> </a> 
-							<a href="https://instagram.com/mansz.81" ><i class="fab fa-facebook tz-icon-color"></i> </a> 
-							<a href="https://facebook.com/mansz.81" ><i class="fab fa-instagram tz-icon-color"></i> </a> 
-							<a href="https://id.pinterest.com/readloud7/" ><i class="fab fa-pinterest tz-icon-color"></i> </a> 
-							<a href="https://discord.gg/readloud" ><i class="fab fa-discord tz-icon-color"></i> </a>
-							<a href="https://youtube.com/@readloud7" ><i class="fab fa-youtube tz-icon-color"></i> 
-							</a> </p>
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500 space-y-2">
+                            <p><a href="https://github.com/readloud" ><i class="fab fa-github tz-icon-color"></i>  </a> 
+                            <a href="https://readloud.slack.com/archives/C036G9A08CE" ><i class="fab fa-slack tz-icon-color"></i> </a> 
+                            <a href="https://instagram.com/mansz.81" ><i class="fab fa-facebook tz-icon-color"></i> </a> 
+                            <a href="https://facebook.com/mansz.81" ><i class="fab fa-instagram tz-icon-color"></i> </a> 
+                            <a href="https://id.pinterest.com/readloud7/" ><i class="fab fa-pinterest tz-icon-color"></i> </a> 
+                            <a href="https://discord.gg/readloud" ><i class="fab fa-discord tz-icon-color"></i> </a>
+                            <a href="https://youtube.com/@readloud7" ><i class="fab fa-youtube tz-icon-color"></i> 
+                            </a> </p>
                                 </div>
-							</div>
+                            </div>
             </section>
 
             <section class="lg:col-span-7 space-y-6">
@@ -468,20 +456,20 @@
                             </div>
                             <textarea id="ai-generated-caption" rows="3" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-300 focus:outline-none" placeholder="Takarir dari AI akan muncul di sini..."></textarea>
                         </div>
-						<div class="grid grid-cols-3 gap-3">
-							<a href="https://www.tiktok.com/upload" target="_blank" class="bg-slate-950 hover:bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all hover:border-pink-500 group">
-						<i class="fa-brands fa-tiktok text-xl text-pink-500 group-hover:scale-110 transition-transform"></i>
-						<span class="text-[11px] font-semibold text-slate-300">TikTok</span>
-							</a>
-							<a href="https://www.instagram.com/" target="_blank" class="bg-slate-950 hover:bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all hover:border-purple-500 group">
-						<i class="fa-brands fa-instagram text-xl text-purple-400 group-hover:scale-110 transition-transform"></i>
-						<span class="text-[11px] font-semibold text-slate-300">Instagram Reels</span>
-							</a>
-							<a href="https://studio.youtube.com/" target="_blank" class="bg-slate-950 hover:bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all hover:border-red-500 group">
-						<i class="fa-brands fa-youtube text-xl text-red-500 group-hover:scale-110 transition-transform"></i>
-						<span class="text-[11px] font-semibold text-slate-300">YouTube Shorts</span>
-							</a>
-						</div>
+                        <div class="grid grid-cols-3 gap-3">
+                            <a href="https://www.tiktok.com/upload" target="_blank" class="bg-slate-950 hover:bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all hover:border-pink-500 group">
+                        <i class="fa-brands fa-tiktok text-xl text-pink-500 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-[11px] font-semibold text-slate-300">TikTok</span>
+                            </a>
+                            <a href="https://www.instagram.com/" target="_blank" class="bg-slate-950 hover:bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all hover:border-purple-500 group">
+                        <i class="fa-brands fa-instagram text-xl text-purple-400 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-[11px] font-semibold text-slate-300">Instagram Reels</span>
+                            </a>
+                            <a href="https://studio.youtube.com/" target="_blank" class="bg-slate-950 hover:bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all hover:border-red-500 group">
+                        <i class="fa-brands fa-youtube text-xl text-red-500 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-[11px] font-semibold text-slate-300">YouTube Shorts</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -501,9 +489,8 @@
                     <div id="copy-toast" class="hidden text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 py-2.5 px-4 rounded-lg flex items-center gap-2">
                         <i data-lucide="badge-check" class="w-4 h-4"></i> berhasil disalin ke clipboard!
                     </div>
-                    <!-- Tips / Penjelasan Singkat -->
                     <div class="bg-indigo-950/20 border border-indigo-900/30 rounded-xl p-4 text-xs text-slate-400 space-y-2">
-						<span class="font-semibold text-slate-200">💡 Tips Menjalankan Perintah</span>
+                        <span class="font-semibold text-slate-200">💡 Tips Menjalankan Perintah</span>
                         <ul class="list-disc pl-4 space-y-1">
                             <li>Instal FFmpeg di PC/Server Anda.</li>
                             <li>Buka Terminal / Command Prompt pada direktori tempat file audio berada.</li>
@@ -601,31 +588,86 @@
             contentEduForm.classList.remove('hidden'); contentMusicForm.classList.add('hidden');
         });
 
-        // Logic Update Terminal Command FFmpeg
+        // Fungsi Update Terminal Command FFmpeg
         function updateFfmpegTerminal() {
             const res = paramResolution.value;
             const mode = document.querySelector('.mode-btn.active').dataset.mode;
             const color = paramColor.value.replace('#', '0x');
-            const bg = paramBg.value;
             const pix = paramPixel.value;
             const acodec = paramAudioCodec.value;
+            
+            // Menggunakan URL Blob dari upload jika ada, jika tidak gunakan fallback 'input.mp3'
+            const inputSource = window.uploadedAudioUrl || "input.mp3";
 
             let filter = `[0:a]showwaves=s=${res}:mode=${mode}:colors=${color},format=${pix}[v]`;
             if (mode === 'circular') {
                 filter = `[0:a]showwaves=s=${res}:mode=line:colors=${color},format=${pix},edgedetect[v]`;
             }
-            commandText.textContent = `ffmpeg -i input.mp3 -filter_complex "${filter}" -map "[v]" -map 0:a -c:v libx264 -c:a ${acodec} output.mp4`;
+            
+            commandText.textContent = `ffmpeg -i "${inputSource}" -filter_complex "${filter}" -map "[v]" -map 0:a -c:v libx264 -c:a ${acodec} output.mp4`;
         }
 
+        // Event listener untuk perubahan parameter yang memerlukan update terminal
         paramResolution.addEventListener('change', updateFfmpegTerminal);
         paramPixel.addEventListener('change', updateFfmpegTerminal);
         paramAudioCodec.addEventListener('change', updateFfmpegTerminal);
+        
         modeButtons.forEach(btn => btn.addEventListener('click', (e) => {
             modeButtons.forEach(b => b.classList.remove('active', 'bg-indigo-600/20', 'text-indigo-400', 'border-indigo-500/30'));
             modeButtons.forEach(b => b.classList.add('bg-dark-950', 'text-slate-400', 'border-slate-800'));
             e.target.classList.add('active', 'bg-indigo-600/20', 'text-indigo-400', 'border-indigo-500/30');
             updateFfmpegTerminal();
         }));
+
+        // Event listener untuk upload audio dengan Vercel Blob
+        audioUpload.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Tampilkan status loading di UI
+            uploadLabel.textContent = "Mengunggah ke Cloud...";
+            
+            try {
+                // Mengunggah file ke API Route Vercel Blob
+                const response = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
+                    method: 'POST',
+                    body: file,
+                });
+                
+                if (!response.ok) throw new Error("Gagal mengupload file");
+                
+                const blob = await response.json();
+                
+                // Simpan URL Blob agar bisa diakses oleh FFmpeg
+                window.uploadedAudioUrl = blob.url; 
+                
+                // Update UI
+                fileInfo.classList.remove('hidden');
+                fileName.textContent = file.name;
+                fileSize.textContent = (file.size / (1024 * 1024)).toFixed(2) + " MB";
+                uploadLabel.textContent = "File berhasil diunggah!";
+                
+                // Update Terminal FFmpeg dengan URL Blob
+                updateFfmpegTerminal();
+            } catch (error) {
+                uploadLabel.textContent = "Gagal mengunggah!";
+                showCustomToast("Terjadi kesalahan saat upload ke Vercel Blob.");
+            }
+        });
+
+        // Event listener untuk reset file
+        btnReset.addEventListener('click', () => {
+            if (audioUpload) audioUpload.value = '';
+            fileInfo.classList.add('hidden');
+            uploadLabel.textContent = "Unggah file audio (.mp3, .wav, .m4a)";
+            window.uploadedAudioUrl = null;
+            updateFfmpegTerminal();
+        });
+
+        // Event listener demo sederhana
+        btnDemo.addEventListener('click', () => {
+            showCustomToast("Demo mode aktif - silakan upload file audio untuk preview", "success");
+        });
 
         // Salin Perintah Terminal FFmpeg
         btnCopy.addEventListener('click', () => {
