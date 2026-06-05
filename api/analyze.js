@@ -133,19 +133,20 @@ export default async function handler(req, res) {
                 break;
             }
 
-            case 'qwen': {
-                const apiKey = process.env.QWEN_API_KEY;
-                if (!apiKey) throw new Error("QWEN_API_KEY belum diatur di dashboard Vercel.");
+            case 'anthropic': {
+                const apiKey = process.env.ANTHROPIC_AUTH_TOKEN;
+                if (!apiKey) throw new Error("ANTHROPIC_AUTH_TOKEN belum diatur di dashboard Vercel.");
                 
-                const response = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
+                const response = await fetch('https://api.deepseek.com/anthropic', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${apiKey}`
                     },
                     body: JSON.stringify({
-                        model: "qwen-turbo",
-                        messages: [{ role: "user", content: aiSystemPrompt }]
+                        model: "deepseek-v4-flash",
+                        messages: [{ role: "user", content: aiSystemPrompt }],
+                        response_format: { type: "json_object" }
                     })
                 });
                 const result = await response.json();
