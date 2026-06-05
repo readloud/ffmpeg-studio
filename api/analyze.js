@@ -1,52 +1,14 @@
-// Fungsi Serverless Vercel untuk memproses request AI & API pihak ketiga secara aman
+// Fungsi Serverless Vercel Multi-Engine untuk mendukung berbagai penyedia AI
 export default async function handler(req, res) {
-    // Hanya izinkan metode POST demi keamanan data
     if (req.method !== 'POST') {
         return res.status(455).json({ error: 'Metode tidak diizinkan. Gunakan POST.' });
     }
 
-    const { activeName, customProvider, customApiKeyManual } = req.body;
+    const { activeName, provider = 'gemini' } = req.body;
     if (!activeName) {
         return res.status(400).json({ error: 'Nama audio aktif wajib disertakan.' });
     }
 
-    // 1. Mengambil default API Keys dari Environment Variable Vercel (Sisi Server)
-    const envApiKeys = {
-        GEMINI: process.env.GEMINI_API_KEY,
-        PEXELS: process.env.PEXELS_API_KEY,
-        PIXABAY: process.env.PIXABAY_API_KEY,
-        DEEPSEEK: process.env.DEEPSEEK_API_KEY,
-        MIMO: process.env.MIMO_API_KEY,
-        OPENAI: process.env.OPENAI_API_KEY,
-        CLAUDE: process.env.CLAUDE_API_KEY,
-        POLLINATIONS: process.env.POLLINATIONS_API_KEY,
-        AIHUBMIX: process.env.AIHUBMIX_API_KEY,
-        MOONSHOT: process.env.MOONSHOT_API_KEY,
-        AZURE: process.env.AZURE_API_KEY,
-        GROK: process.env.GROK_API_KEY,
-        QWEN: process.env.QWEN_API_KEY,
-        MINIMAX: process.env.MINIMAX_API_KEY,
-        MODELSCOPE: process.env.MODELSCOPE_API_KEY,
-        HUGHINGFACE: process.env.HUGHINGFACE_API_KEY
-    };
-
-    // Tentukan provider aktif (jika tidak dikirim dari front-end, default ke HUGHINGFACE)
-    const selectedProvider = customProvider || 'HUGHINGFACE';
-
-    // Prioritaskan API Key manual yang dimasukkan user dari front-end. Jika kosong, gunakan default server env
-    const activeApiKeyForAnalysis = (customApiKeyManual && customApiKeyManual.trim() !== "") 
-        ? customApiKeyManual 
-        : envApiKeys[selectedProvider] || envApiKeys['GEMINI']; // Fallback global ke Gemini untuk fungsi analisis dasar
-
-    if (!activeApiKeyForAnalysis) {
-        return res.status(500).json({ 
-            error: `Kunci API untuk provider ${selectedProvider} belum dikonfigurasi di client maupun server environment.` 
-        });
-    }
-
-    // End-point konstruksi default menggunakan Google Gemini API Core Engine
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${envApiKeys['GEMINI'] || activeApiKeyForAnalysis}`;
-    
     const aiSystemPrompt = `
         Anda adalah asisten produser konten audio visual profesional. Analisis judul audio berikut: "${activeName}".
         Deteksi apakah file ini lebih cocok dikategorikan sebagai "music" (lagu/musik) atau "edu" (diskusi, podcast edukasi, pembahasan coding, sains, keilmuan).
@@ -67,88 +29,192 @@ export default async function handler(req, res) {
             "releaseYear": "Tahun rilis",
             "lyrics": "Dua baris lirik lagu puitis bahasa indonesia yang indah sesuai getaran judul lagu"
           },
+          
           "eduData": {
-            "topic": "Nama topik diskusi pendidikan/coding/keilmuan",
-            "category": "Kategori bidang ilmu"
+            "topic": "Nama topik diskusi pendidikan/coding/keilmuan fiktif/asli yang cocok",
+            "category": "Kategori keilmuan (misal: Kecerdasan Buatan, Desain Grafis, Pemrograman)",
+            "links": [
+              { "name": "Nama situs web edukasi terkenal fiktif/asli terkait", "url": "Alamat url situs tersebut" },
+              { "name": "Nama forum komunitas diskusi/wiki terkait", "url": "Alamat url forum diskusi/wiki terkait" }
+            ]
           }
         }
-        Pastikan output hanya mengembalikan objek JSON valid tanpa Markdown backticks.
+        
+        Respon HANYA berupa teks JSON bersih tanpa markdown tag atau karakter lain.
     `;
 
-    let aiResultText = "";
     try {
-        const aiResponse = await fetch(endpoint, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: aiSystemPrompt }] }]
-            })
+        let aiResponseText = "";
+
+        switch (provider.toLowerCase()) {
+            case 'deepseek': {
+                const apiKey = process.env.DEEPSEEK_API_KEY;
+                if (!apiKey) throw new Error("DEEPSEEK_API_KEY belum diatur di dashboard Vercel.");
+                
+                const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "deepseek-chat",
+                        messages: [{ role: "user", content: aiSystemPrompt }],
+                        response_format: { type: "json_object" }
+                    })
+                });
+                const result = await response.json();
+                aiResponseText = result.choices?.[0]?.message?.content;
+                break;
+            }
+
+            case 'claude': {
+                const apiKey = process.env.CLAUDE_API_KEY;
+                if (!apiKey) throw new Error("CLAUDE_API_KEY belum diatur di dashboard Vercel.");
+                
+                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': apiKey,
+                        'anthropic-version': '2023-06-01'
+                    },
+                    body: JSON.stringify({
+                        model: "claude-3-5-sonnet-20241022",
+                        max_tokens: 1024,
+                        messages: [{ role: "user", content: aiSystemPrompt }]
+                    })
+                });
+                const result = await response.json();
+                aiResponseText = result.content?.[0]?.text;
+                break;
+            }
+
+            case 'grok': {
+                const apiKey = process.env.GROK_API_KEY;
+                if (!apiKey) throw new Error("GROK_API_KEY belum diatur di dashboard Vercel.");
+                
+                const response = await fetch('https://api.x.ai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "grok-beta",
+                        messages: [{ role: "user", content: aiSystemPrompt }]
+                    })
+                });
+                const result = await response.json();
+                aiResponseText = result.choices?.[0]?.message?.content;
+                break;
+            }
+
+            case 'qwen': {
+                const apiKey = process.env.QWEN_API_KEY;
+                if (!apiKey) throw new Error("QWEN_API_KEY belum diatur di dashboard Vercel.");
+                
+                const response = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "qwen-turbo",
+                        messages: [{ role: "user", content: aiSystemPrompt }]
+                    })
+                });
+                const result = await response.json();
+                aiResponseText = result.choices?.[0]?.message?.content;
+                break;
+            }
+
+            case 'moonshot': {
+                const apiKey = process.env.MOONSHOT_API_KEY;
+                if (!apiKey) throw new Error("MOONSHOT_API_KEY belum diatur di dashboard Vercel.");
+                
+                const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "moonshot-v1-8k",
+                        messages: [{ role: "user", content: aiSystemPrompt }]
+                    })
+                });
+                const result = await response.json();
+                aiResponseText = result.choices?.[0]?.message?.content;
+                break;
+            }
+
+            case 'gemini':
+            default: {
+                const apiKey = process.env.GEMINI_API_KEY;
+                if (!apiKey) throw new Error("GEMINI_API_KEY belum diatur di dashboard Vercel.");
+                
+                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: aiSystemPrompt }] }]
+                    })
+                });
+                const result = await response.json();
+                aiResponseText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                break;
+            }
+        }
+
+        // PERBAIKAN: Memastikan respon AI aman dari undefined sebelum melakukan replace
+        if (!aiResponseText) {
+            return res.status(500).json({ error: "Respon dari AI kosong atau tidak valid." });
+        }
+
+        let aiData;
+        try {
+            if (typeof aiResponseText === 'string') {
+                let cleanedJson = aiResponseText.replace(/```json/g, '').replace(/```/g, '').trim();
+                aiData = JSON.parse(cleanedJson);
+            } else {
+                aiData = aiResponseText; // Jika sudah berupa Object
+            }
+        } catch (e) {
+            return res.status(200).json({ data: aiResponseText, pexelsVideos: [] });
+        }
+
+        // Ambil data video tambahan dari Pexels secara otomatis jika dikonfigurasi
+        let pexelsVideos = [];
+        const pexelsApiKey = process.env.PEXELS_API_KEY || process.env.PIXABAY_API_KEY; // Fallback
+        
+        if (pexelsApiKey && aiData.keyword) {
+            try {
+                const pexelsEndpoint = `https://api.pexels.com/videos/search?query=${encodeURIComponent(aiData.keyword)}&per_page=6`;
+                const pexelsResponse = await fetch(pexelsEndpoint, {
+                    headers: { 'Authorization': pexelsApiKey }
+                });
+                if (pexelsResponse.ok) {
+                    const pexelsData = await pexelsResponse.json();
+                    pexelsVideos = (pexelsData.videos || []).map(v => ({
+                        id: v.id,
+                        image: v.image,
+                        videoUrl: v.video_files.find(f => f.quality === 'sd' || f.width < 1280)?.link || v.video_files[0]?.link
+                    }));
+                }
+            } catch (err) {
+                console.error("Kesalahan API Pexels diabaikan:", err);
+            }
+        }
+
+        return res.status(200).json({ 
+            data: aiData, // Kembalikan data murni (Vercel akan mengemasnya sebagai JSON aman)
+            pexelsVideos: pexelsVideos 
         });
 
-        if (aiResponse.ok) {
-            const aiDataJson = await aiResponse.json();
-            aiResultText = aiDataJson.candidates[0].content.parts[0].text;
-        } else {
-            throw new Error("Gagal melakukan panggilan API Generative.");
-        }
     } catch (err) {
-        // Fallback data jika request AI gagal terhubung
-        aiResultText = JSON.stringify({
-            contentType: "music",
-            keyword: "lofi aesthetic",
-            hexColor: "#a5b4fc",
-            caption: "Menikmati harmoni melodi kehidupan digital ✨ #lofi #ambient #waveform",
-            musicData: {
-                title: "Aura Nostalgia",
-                singer: "Rian Pratama",
-                composer: "Dian Lesmana",
-                album: "Gema Angkasa",
-                genre: "Lofi / Ambient",
-                releaseYear: "2026",
-                lyrics: "Melangkah sunyi di antara gemintang senja\nMenanti rasa yang tertinggal di sana"
-            }
-        });
+        return res.status(500).json({ error: `Kesalahan Pemrosesan AI: ${err.message}` });
     }
-
-    // 2. Bersihkan output text menjadi JSON valid objek
-    let aiData = {};
-    try {
-        const cleanedJson = aiResultText.replace(/```json/g, '').replace(/```/g, '').trim();
-        aiData = JSON.parse(cleanedJson);
-    } catch (e) {
-        try {
-            aiData = JSON.parse(aiResultText);
-        } catch (err) {
-            return res.status(200).json({ data: { contentType: "music", keyword: "retro" }, pexelsVideos: [] });
-        }
-    }
-
-    // 3. Pemanggilan ke API Pexels secara otomatis jika pencarian video dipicu
-    let pexelsVideos = [];
-    const pexelsKeyActive = envApiKeys['PEXELS'];
-    if (pexelsKeyActive && aiData.keyword) {
-        try {
-            const pexelsEndpoint = `https://api.pexels.com/videos/search?query=${encodeURIComponent(aiData.keyword)}&per_page=6`;
-            const pexelsResponse = await fetch(pexelsEndpoint, {
-                headers: { 'Authorization': pexelsKeyActive }
-            });
-            if (pexelsResponse.ok) {
-                const pexelsData = await pexelsResponse.json();
-                pexelsVideos = (pexelsData.videos || []).map(v => ({
-                    id: v.id,
-                    image: v.image,
-                    videoUrl: v.video_files.find(f => f.quality === 'sd' || f.width < 1280)?.link || v.video_files[0]?.link
-                }));
-            }
-        } catch (pexelsError) {
-            console.error("Kesalahan API Pexels diabaikan agar proses AI tetap berjalan:", pexelsError);
-        }
-    }
-
-    // 4. Kirimkan gabungan hasil akhir ke klien front-end
-    return res.status(200).json({
-        data: aiData,
-        pexelsVideos: pexelsVideos,
-        providerUsed: selectedProvider
-    });
 }

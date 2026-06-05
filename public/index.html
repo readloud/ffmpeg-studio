@@ -531,7 +531,7 @@
         </div>
     </main>
 
-    <video id="bg-video-element" loop muted crossOrigin="anonymous" class="hidden"></video>
+<video id="bg-video-element" loop muted crossOrigin="anonymous" class="hidden"></video>
 
     <!-- Logic JavaScript -->
     <script>
@@ -1107,8 +1107,14 @@
                     throw new Error(resData.error || `HTTP Error ${response.status}`);
                 }
 
-                const cleanedJson = resData.data.replace(/```json/g, '').replace(/```/g, '').trim();
-                const data = JSON.parse(cleanedJson);
+                // PERBAIKAN: Validasi tipe data sebelum memanggil .replace()
+                let data;
+                if (typeof resData.data === 'string') {
+                    const cleanedJson = resData.data.replace(/```json/g, '').replace(/```/g, '').trim();
+                    data = JSON.parse(cleanedJson);
+                } else {
+                    data = resData.data; // Jika sudah berupa Object, langsung gunakan
+                }
 
                 if (data.keyword) { videoKeyword.value = data.keyword; }
                 if (data.hexColor) { paramColor.value = data.hexColor; paramColorText.value = data.hexColor; }
