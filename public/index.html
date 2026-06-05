@@ -144,7 +144,7 @@
                 </div>
 
                 <!-- Card 2: AI Video Finder -->
-                <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+                                <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                     <h2 class="text-base font-semibold text-white flex items-center gap-2">
                         <i data-lucide="video" class="w-5 h-5 text-purple-400"></i>
                         2. Latar Belakang Video & Gambar (AI Finder)
@@ -174,36 +174,12 @@
                             <h3 class="text-xs font-semibold text-indigo-400 flex items-center gap-1">
                                 <i data-lucide="key" class="w-3.5 h-3.5"></i> API Key Kustom (Opsional)
                             </h3>
-
+                            
                             <div class="space-y-1">
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-[10px] text-slate-400 font-semibold uppercase mb-1">Pilih Provider API</label>
-                                    <select id="custom-api-provider" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                        <option value="HUGHINGFACE">HUGHINGFACE</option>
-                                        <option value="PEXELS">PEXELS</option>
-                                        <option value="PIXABAY">PIXABAY</option>
-                                        <option value="DEEPSEEK">DEEPSEEK</option>
-                                        <option value="MIMO">MIMO</option>
-                                        <option value="OPENAI">OPENAI</option>
-                                        <option value="CLAUDE">CLAUDE</option>
-                                        <option value="POLLINATIONS">POLLINATIONS</option>
-                                        <option value="AIHUBMIX">AIHUBMIX</option>
-                                        <option value="MOONSHOT">MOONSHOT</option>
-                                        <option value="AZURE">AZURE</option>
-                                        <option value="GROK">GROK</option>
-                                        <option value="QWEN">QWEN</option>
-                                        <option value="MINIMAX">MINIMAX</option>
-                                        <option value="MODELSCOPE">MODELSCOPE</option>
-                                        <option value="GEMINI" selected>GEMINI</option>
-                                    </select>
-                                </div>
-                                <div>
-                                <label class="block text-[10px] text-slate-400 font-semibold uppercase mb-1">API Key</label>
-                                    <input type="password" id="custom-api-key" placeholder="Masukkan API Key manual" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
-                                </div>
+                                <label class="block text-[10px] text-slate-400 font-semibold uppercase">Pexels/Pixabay API Key</label>
+                                <input type="password" id="custom-api-key" placeholder="Masukkan API Key Pexels/Pixabay Anda" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                                <span class="text-[9px] text-slate-500 block leading-normal">Kosongkan jika ingin menggunakan koleksi default.</span>
                             </div>
-                            <span class="text-[9px] text-slate-500 block leading-normal">Kosong jika ingin menggunakan kredensial bawaan.</span>
                         </div>
 
                         <div id="video-results-grid" class="grid grid-cols-3 gap-2 overflow-y-auto max-h-36 pr-1"></div>
@@ -214,7 +190,7 @@
                 <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                     <h2 class="text-base font-semibold text-white flex items-center gap-2">
                         <i data-lucide="badge-check" class="w-5 h-5 text-indigo-400"></i>
-                        3. Tambahkan Watermark / Logo Text
+                        3. Watermark / Logo Text
                     </h2>
                     <div class="space-y-3">
                         <div class="flex gap-3">
@@ -253,7 +229,7 @@
                 <div class="bg-dark-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
                     <h2 class="text-base font-semibold text-white flex items-center gap-2">
                         <i data-lucide="sliders" class="w-5 h-5 text-pink-400"></i>
-                        4. Kustomisasi Efek Grafis & Waveform
+                        4. Efek Grafis & Waveform
                     </h2>
 
                     <div>
@@ -266,7 +242,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Gaya Visualisasi Waveform</label>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Visualisasi Waveform</label>
                         <div class="grid grid-cols-3 gap-1.5">
                             <button data-mode="line" class="mode-btn active bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 py-2 rounded-lg text-[11px] font-semibold hover:bg-indigo-600/10 transition-all">Line</button>
                             <button data-mode="cline" class="mode-btn bg-dark-950 text-slate-400 border border-slate-800 py-2 rounded-lg text-[11px] font-semibold hover:bg-slate-800 transition-all">Center Line</button>
@@ -403,7 +379,7 @@
 
                     <!-- SUB-CARD: METADATA MUSIK -->
                     <div id="content-music-form" class="space-y-4">
-                        <p class="text-xs text-slate-400 leading-relaxed">Formulir terisi otomatis oleh AI, atau disesuaikan:</p>
+                        <p class="text-xs text-slate-400 leading-relaxed">Otomatis oleh AI, atau disesuaikan:</p>
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                             <div>
                                 <label class="block text-[10px] text-slate-400 font-semibold uppercase">Judul Lagu</label>
