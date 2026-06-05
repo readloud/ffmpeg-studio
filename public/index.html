@@ -704,7 +704,11 @@
                 ctx.font = `bold ${size}px 'Plus Jakarta Sans', sans-serif`;
                 let x = 30, y = 30 + size;
                 if (logoPosition.value === 'top-right') { x = w - ctx.measureText(lText).width - 30; }
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.75)'; ctx.shadowBlur = 6; ctx.fillText(lText, x, y); ctx.restore();
+                
+                // Kurangi beban render bayangan pada mode rekaman
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.75)'; 
+                ctx.shadowBlur = isRecording ? 2 : 6; 
+                ctx.fillText(lText, x, y); ctx.restore();
             }
 
             ctx.save();
@@ -737,7 +741,8 @@
                 linkInputs.forEach((item, index) => {
                     if (index > 2) return;
                     const inputs = item.querySelectorAll('input');
-                    const siteName = inputs[0].value || "Web", siteUrl = inputs[1].value || "";
+                    const siteName = inputs[0].value || "Web";
+                    const siteUrl = inputs[1].value || "";
                     ctx.fillStyle = '#a5b4fc'; ctx.font = "600 11px 'JetBrains Mono', monospace";
                     ctx.fillText(`• ${siteName}`, boxX + 20, startY);
                     ctx.fillStyle = '#64748b'; ctx.font = "10px 'JetBrains Mono', monospace";
@@ -902,15 +907,20 @@
             }
         }
 
+        // OPTIMASI: Batching path rendering partikel (1 draw call saja)
         function updateAndDrawParticles(audioAmplitude) {
             if (!paramParticles.checked) return;
             ctx.fillStyle = `rgba(255, 255, 255, 0.4)`;
+            ctx.beginPath();
             particles.forEach(p => {
                 const multiplier = 1 + (audioAmplitude / 128.0) * 1.5;
                 p.y += p.speedY * multiplier; p.x += p.speedX;
                 if (p.y < 0) { p.y = canvas.height; p.x = Math.random() * canvas.width; }
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.size * (multiplier > 1.2 ? multiplier : 1), 0, Math.PI * 2); ctx.fill();
+                const r = p.size * (multiplier > 1.2 ? multiplier : 1);
+                ctx.moveTo(p.x + r, p.y);
+                ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
             });
+            ctx.fill();
         }
 
         function drawBackground() {
@@ -918,7 +928,14 @@
             ctx.fillStyle = paramBgText.value; ctx.fillRect(0, 0, w, h);
             if (bgVideoElement.src && !bgVideoElement.paused) {
                 ctx.save();
-                if (parseInt(paramBgBlur.value) > 0) ctx.filter = `blur(${paramBgBlur.value}px)`;
+                
+                // OPTIMASI: Batasi blur level maksimal 2px saat merekam video
+                let blurVal = parseInt(paramBgBlur.value);
+                if (isRecording) {
+                    blurVal = Math.min(blurVal, 2); 
+                }
+                if (blurVal > 0) ctx.filter = `blur(${blurVal}px)`;
+                
                 const vWidth = bgVideoElement.videoWidth || 1280, vHeight = bgVideoElement.videoHeight || 720;
                 const ratio = Math.max(w / vWidth, h / vHeight);
                 const nW = vWidth * ratio, nH = vHeight * ratio;
@@ -935,8 +952,14 @@
             drawBackground();
             const colorValue = paramColorText.value;
             ctx.strokeStyle = colorValue; ctx.fillStyle = colorValue; ctx.lineWidth = 3;
-            const glow = parseInt(paramGlow.value);
+            
+            // OPTIMASI: Batasi pendaran glow saat merekam untuk menghindari CPU choke
+            let glow = parseInt(paramGlow.value);
+            if (isRecording) {
+                glow = Math.min(glow, 5);
+            }
             if (glow > 0) { ctx.shadowBlur = glow; ctx.shadowColor = colorValue; } else { ctx.shadowBlur = 0; }
+            
             const leftChannel = audioBuffer.getChannelData(0), step = Math.ceil(leftChannel.length / w), amp = h / 2.5;
 
             ctx.beginPath();
@@ -973,7 +996,10 @@
             else {
                 const w = canvas.width, h = canvas.height; drawBackground();
                 ctx.strokeStyle = paramColorText.value; ctx.lineWidth = 3;
-                const glow = parseInt(paramGlow.value);
+                let glow = parseInt(paramGlow.value);
+                if (isRecording) {
+                    glow = Math.min(glow, 5);
+                }
                 if (glow > 0) { ctx.shadowBlur = glow; ctx.shadowColor = paramColorText.value; } else { ctx.shadowBlur = 0; }
                 if (currentMode === 'circular') {
                     ctx.beginPath(); ctx.arc(w/2, h/2, Math.min(w, h) * 0.22, 0, Math.PI * 2); ctx.stroke();
@@ -993,8 +1019,14 @@
             analyser.getByteTimeDomainData(data);
             const w = canvas.width, h = canvas.height; drawBackground();
             const col = paramColorText.value; ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 3;
-            const glow = parseInt(paramGlow.value);
+            
+            // OPTIMASI: Batasi pendaran glow saat merekam untuk menghindari CPU choke
+            let glow = parseInt(paramGlow.value);
+            if (isRecording) {
+                glow = Math.min(glow, 5);
+            }
             if (glow > 0) { ctx.shadowBlur = glow; ctx.shadowColor = col; } else { ctx.shadowBlur = 0; }
+            
             const sW = w / len;
 
             let sum = 0;
@@ -1038,10 +1070,16 @@
 
             const cStream = canvas.captureStream(30), dest = audioContext.createMediaStreamDestination();
             gainNode.disconnect(); gainNode.connect(dest); gainNode.connect(audioContext.destination);
-            const combined = new MediaStream([...cStream.getVideoTracks(), ...dest.stream.getAudioTracks()]);
+            
+            // OPTIMASI: Penyatuan track streaming yang lebih aman & kompatibel
+            const combined = new MediaStream();
+            cStream.getVideoTracks().forEach(track => combined.addTrack(track));
+            dest.stream.getAudioTracks().forEach(track => combined.addTrack(track));
 
-            let opts = { mimeType: 'video/webm;codecs=vp9,opus' };
-            if (!MediaRecorder.isTypeSupported(opts.mimeType)) opts = { mimeType: 'video/webm;codecs=vp8,opus' };
+            // OPTIMASI: Prioritaskan codec VP8 yang sangat ringan & hemat resource daripada VP9
+            let opts = { mimeType: 'video/webm;codecs=vp8,opus' };
+            if (!MediaRecorder.isTypeSupported(opts.mimeType)) opts = { mimeType: 'video/webm;codecs=vp9,opus' };
+            if (!MediaRecorder.isTypeSupported(opts.mimeType)) opts = { mimeType: 'video/mp4;codecs=h264,aac' };
             if (!MediaRecorder.isTypeSupported(opts.mimeType)) opts = { mimeType: 'video/webm' };
 
             mediaRecorder = new MediaRecorder(combined, opts);
@@ -1083,14 +1121,8 @@
                     throw new Error(resData.error || `HTTP Error ${response.status}`);
                 }
 
-                // PERBAIKAN: Validasi tipe data sebelum memanggil .replace()
-                let data;
-                if (typeof resData.data === 'string') {
-                    const cleanedJson = resData.data.replace(/```json/g, '').replace(/```/g, '').trim();
-                    data = JSON.parse(cleanedJson);
-                } else {
-                    data = resData.data; // Jika sudah berupa Object, langsung gunakan
-                }
+                const cleanedJson = resData.data.replace(/```json/g, '').replace(/```/g, '').trim();
+                const data = JSON.parse(cleanedJson);
 
                 if (data.keyword) { videoKeyword.value = data.keyword; }
                 if (data.hexColor) { paramColor.value = data.hexColor; paramColorText.value = data.hexColor; }
