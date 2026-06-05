@@ -1,4 +1,27 @@
-// Fungsi Serverless Vercel Multi-Engine untuk mendukung berbagai penyedia AI
+// Helper untuk mengekstrak JSON secara tangguh dari teks respon AI
+function extractJSON(text) {
+    if (!text) throw new Error("Teks respon kosong dari penyedia AI.");
+    
+    // Hapus blok berpikir (thinking block) milik DeepSeek R1 jika ada
+    let cleanText = text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+    
+    try {
+        // Coba parsing langsung jika teks sudah bersih
+        return JSON.parse(cleanText);
+    } catch (e) {
+        // Jika gagal, cari pola kurung kurawal terluar menggunakan regex
+        const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+            try {
+                return JSON.parse(jsonMatch[0]);
+            } catch (innerError) {
+                throw new Error("Gagal mengurai struktur JSON meskipun pola ditemukan.");
+            }
+        }
+        throw new Error("Respon tidak mengandung format JSON yang valid { ... }.");
+    }
+}
+
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(455).json({ error: 'Metode tidak diizinkan. Gunakan POST.' });
@@ -155,7 +178,8 @@ export default async function handler(req, res) {
                 const apiKey = process.env.GEMINI_API_KEY;
                 if (!apiKey) throw new Error("GEMINI_API_KEY belum diatur di dashboard Vercel.");
                 
-                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                // MENGGUNAKAN STABLE GA MODEL UNTUK PRODUKSI (gemini-2.5-flash)
+                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
                 const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -169,26 +193,16 @@ export default async function handler(req, res) {
             }
         }
 
-        // PERBAIKAN: Memastikan respon AI aman dari undefined sebelum melakukan replace
         if (!aiResponseText) {
-            return res.status(500).json({ error: "Respon dari AI kosong atau tidak valid." });
+            return res.status(500).json({ error: `Penyedia layanan ${provider.toUpperCase()} mengembalikan respon kosong.` });
         }
 
-        let aiData;
-        try {
-            if (typeof aiResponseText === 'string') {
-                let cleanedJson = aiResponseText.replace(/```json/g, '').replace(/```/g, '').trim();
-                aiData = JSON.parse(cleanedJson);
-            } else {
-                aiData = aiResponseText; // Jika sudah berupa Object
-            }
-        } catch (e) {
-            return res.status(200).json({ data: aiResponseText, pexelsVideos: [] });
-        }
+        // Jalankan extractor JSON tangguh
+        const aiData = extractJSON(aiResponseText);
 
         // Ambil data video tambahan dari Pexels secara otomatis jika dikonfigurasi
         let pexelsVideos = [];
-        const pexelsApiKey = process.env.PEXELS_API_KEY || process.env.PIXABAY_API_KEY; // Fallback
+        const pexelsApiKey = process.env.PEXELS_API_KEY || process.env.PIXABAY_API_KEY;
         
         if (pexelsApiKey && aiData.keyword) {
             try {
@@ -209,8 +223,9 @@ export default async function handler(req, res) {
             }
         }
 
+        // Kembalikan langsung objek data murni tanpa stringify berulang
         return res.status(200).json({ 
-            data: aiData, // Kembalikan data murni (Vercel akan mengemasnya sebagai JSON aman)
+            data: aiData, 
             pexelsVideos: pexelsVideos 
         });
 
