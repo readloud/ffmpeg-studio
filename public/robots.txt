@@ -1,0 +1,9 @@
+# Allow all bots by default
+User-agent: *
+Allow: /
+
+# Block specific paths
+Disallow: /old-database/
+Disallow: /private/
+
+Sitemap: ffmpeg-studio.vercel.app/sitemap.xml
