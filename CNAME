@@ -1,0 +1,66 @@
+;;
+;; Domain:     readloud.github.io.
+;; Exported:   2026-01-23 14:10:27
+;;
+;; This file is intended for use for informational and archival
+;; purposes ONLY and MUST be edited before use on a production
+;; DNS server.  In particular, you must:
+;;   -- update the SOA record with the correct authoritative name server
+;;   -- update the SOA record with the contact e-mail address information
+;;   -- update the NS record(s) with the authoritative name servers for this domain.
+;;
+;; For further information, please consult the BIND documentation
+;; located on the following website:
+;;
+;; http://www.isc.org/
+;;
+;; And RFC 1035:
+;;
+;; http://www.ietf.org/rfc/rfc1035.txt
+;;
+;; Please note that we do NOT offer technical support for any use
+;; of this zone data, the BIND name server, or any other third-party
+;; DNS software.
+;;
+;; Use at your own risk.
+;; SOA Record
+readloud.github.io	3600	IN	SOA	pedro.ns.cloudflare.com. dns.cloudflare.com. 2052084402 10000 2400 604800 3600
+
+;; NS Records
+readloud.github.io.	86400	IN	NS	pedro.ns.cloudflare.com.
+readloud.github.io.	86400	IN	NS	vida.ns.cloudflare.com.
+
+;; A Records
+*.readloud.github.io.	1	IN	A	185.199.111.153 ; cf_tags=cf-proxied:true
+*.readloud.github.io.	1	IN	A	185.199.110.153 ; cf_tags=cf-proxied:true
+*.readloud.github.io.	1	IN	A	185.199.109.153 ; cf_tags=cf-proxied:true
+*.readloud.github.io.	1	IN	A	185.199.108.153 ; cf_tags=cf-proxied:true
+readloud.github.io.	1	IN	A	185.199.109.153 ; cf_tags=cf-proxied:true
+readloud.github.io.	1	IN	A	185.199.111.153 ; cf_tags=cf-proxied:true
+readloud.github.io.	1	IN	A	185.199.108.153 ; cf_tags=cf-proxied:true
+readloud.github.io.	1	IN	A	185.199.110.153 ; cf_tags=cf-proxied:true
+www.readloud.github.io.	1	IN	A	185.199.111.153 ; cf_tags=cf-proxied:true
+www.readloud.github.io.	1	IN	A	185.199.110.153 ; cf_tags=cf-proxied:true
+www.readloud.github.io.	1	IN	A	185.199.108.153 ; cf_tags=cf-proxied:true
+www.readloud.github.io.	1	IN	A	185.199.109.153 ; cf_tags=cf-proxied:true
+
+;; AAAA Records
+*.readloud.github.io.	1	IN	AAAA	2606:50c0:8000::153 ; cf_tags=cf-proxied:true
+*.readloud.github.io.	1	IN	AAAA	2606:50c0:8002::153 ; cf_tags=cf-proxied:true
+*.readloud.github.io.	1	IN	AAAA	2606:50c0:8001::153 ; cf_tags=cf-proxied:true
+*.readloud.github.io.	1	IN	AAAA	2606:50c0:8003::153 ; cf_tags=cf-proxied:true
+readloud.github.io.	1	IN	AAAA	2606:50c0:8000::153 ; cf_tags=cf-proxied:true
+readloud.github.io.	1	IN	AAAA	2606:50c0:8001::153 ; cf_tags=cf-proxied:true
+readloud.github.io.	1	IN	AAAA	2606:50c0:8002::153 ; cf_tags=cf-proxied:true
+readloud.github.io.	1	IN	AAAA	2606:50c0:8003::153 ; cf_tags=cf-proxied:true
+www.readloud.github.io.	1	IN	AAAA	2606:50c0:8003::153 ; cf_tags=cf-proxied:true
+www.readloud.github.io.	1	IN	AAAA	2606:50c0:8002::153 ; cf_tags=cf-proxied:true
+www.readloud.github.io.	1	IN	AAAA	2606:50c0:8001::153 ; cf_tags=cf-proxied:true
+www.readloud.github.io.	1	IN	AAAA	2606:50c0:8000::153 ; cf_tags=cf-proxied:true
+
+;; CAA Records
+readloud.github.io.	1	IN	CAA	0 issuewild "sectigo.com"
+readloud.github.io.	1	IN	CAA	0 issuewild "digicert.com"
+readloud.github.io.	1	IN	CAA	0 issue "sectigo.com"
+readloud.github.io.	1	IN	CAA	0 issue "letsencrypt.org"
+readloud.github.io.	1	IN	CAA	0 issue "digicert.com"

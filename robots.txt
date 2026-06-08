@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /old-database/
+Disallow: /private/
+Sitemap: https://ffmpeg-studio.vercel.app/sitemap.xml
