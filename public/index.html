@@ -63,7 +63,7 @@
     <meta property="og:url" content="https://ffmpeg-studio.vercel.app/">
     <meta property="og:title" content="Flashdisk Musik Kustom - Koleksi Genre Terlengkap & Grafir Nama Premium">
     <meta property="og:description" content="Bisa grafir nama kustom pakai laser + isi ribuan lagu kualitas HD dari genre terpopuler. Pesan mudah lewat WhatsApp sekarang!">
-    <meta property="og:image" content="images/og-preview.jpg">
+    <meta property="og:image" content="og-preview.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:locale" content="id_ID">
@@ -73,7 +73,7 @@
     <meta property="twitter:url" content="https://ffmpeg-studio.vercel.app/">
     <meta property="twitter:title" content="Flashdisk Musik Kustom - Koleksi Genre Terlengkap">
     <meta property="twitter:description" content="Bisa grafir nama kustom pakai laser + isi ribuan lagu kualitas HD dari genre terpopuler.">
-    <meta property="twitter:image" content="images/og-preview.jpg">
+    <meta property="twitter:image" content="og-preview.png">
 	<meta name="monetag" content="f60aa624b4a4b766999c8ea8fd0d846e">
 	
     <!-- Favicon Tab Browser -->
@@ -84,12 +84,12 @@
 {
     "@context": "https://schema.org",
     "@type": "WebSite",
-	"name": "ReadLoud - Flashdisk Music Custom Premium",
+	"name": "FFmpeg - AI Studio | Social Media Content Creator Assistant",
 	"alternateName": "ReadLoud",
 	"url": "https://ffmpeg-studio.vercel.app/",
-    "Headline": "ReadLoud - Music Custom Playlist | High-quality MP3 Downloads",
-    "description": "ReadLoud - Music Custom Playlist allows you to customize your music playlist to flashdrive in high quality audio up to 320kbps 100% unlimited. No ads and registration not required in ReadLoud - Music Custom Playlist.
-"
+    "Headline": "FFmpeg - AI Studio | Social Media Content Creator Assistant",
+    "description": "FFmpeg - AI Studio | Social Media Content Creator Assistant - Allows you to customize your music video contents in high quality audio up to 320kbps 100% unlimited. No ads and registration not required.
+	"
     }
 	</script>
 	<!-- Schema.org for Software -->    
@@ -97,7 +97,7 @@
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      "name": "ReadLoud - Flashdisk Music Custom Premium",
+      "name": "FFmpeg - AI Studio | Social Media Content Creator Assistant",
       "applicationCategory": "BusinessApplication",
       "operatingSystem": "Windows, macOS, Linux, Android, iOS",
       "offers": {
@@ -157,6 +157,65 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #4f46e5;
         }
+				/* Overlay background */
+		.ad-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.7);
+			display: none; /* Ubah ke flex lewat JS */
+			justify-content: center;
+			align-items: center;
+			z-index: 9999;
+			padding: 20px;
+			box-sizing: border-box;
+		}
+
+		/* Banner container */
+		.ad-banner {
+			position: relative;
+			width: auto;       
+			max-width: 90%;    
+			max-height: 85vh;  
+			background: #fff;
+			padding: 10px;
+			border-radius: 8px;
+			box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+			box-sizing: border-box;
+			
+			display: inline-flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		/* Close Button */
+		.close-btn {
+			position: absolute;
+			top: -15px;
+			right: -15px;
+			background: #333;
+			color: #fff;
+			border: none;
+			border-radius: 50%;
+			width: 30px;
+			height: 30px;
+			font-size: 20px;
+			cursor: pointer;
+			z-index: 10000; 
+		}
+
+		/* Banner Image */
+		.ad-banner img {
+			width: auto;          
+			max-width: 100%;      
+			height: auto;         
+			max-height: calc(85vh - 20px); 
+			object-fit: contain;
+			display: block;
+			border-radius: 4px;
+		}
     </style>
 </head>
 <body class="bg-dark-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
@@ -636,7 +695,81 @@
     </main>
 
 <video id="bg-video-element" loop muted crossOrigin="anonymous" class="hidden"></video>
+	
+				<div id="popup-ad-overlay" class="ad-overlay">
+				<div class="ad-banner">
+					<button id="close-ad-btn" class="close-btn">&times;</button>
+					<a href="#customizer" target="_blank">
+						<img src="ad-banner.png" alt="Create Your Mix Tape Now">
+					</a>
+				</div>
+			</div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const overlay = document.getElementById("popup-ad-overlay");
+    const closeBtn = document.getElementById("close-ad-btn");
+    
+    // PENGATURAN WAKTU (dalam milidetik)
+    const COOLDOWN_TIME = 30 * 60 * 1000; // 30 menit (Ubah angka 30 menjadi 15 jika ingin 15 menit)
+    const AUTO_CLOSE_TIME = 8000;         // 8 detik untuk close otomatis
+    const INITIAL_DELAY = 3000;           // 3 detik delay pertama kali muncul saat web dibuka
 
+    let autoCloseTimeout; // Menyimpan timer auto-close
+
+    // Fungsi untuk memunculkan iklan
+    function showAd() {
+        overlay.style.display = "flex";
+
+        // Fitur: Otomatis close dalam 5 detik
+        autoCloseTimeout = setTimeout(function() {
+            closeAd();
+        }, AUTO_CLOSE_TIME);
+    }
+
+    // Fungsi untuk menutup iklan dan mencatat waktu ditutup
+    function closeAd() {
+        overlay.style.display = "none";
+        
+        // Batalkan timeout otomatis jika user klik tombol close manual sebelum 5 detik
+        clearTimeout(autoCloseTimeout); 
+
+        // Catat waktu sekarang (dalam milidetik) ke localStorage
+        const now = new Date().getTime();
+        localStorage.setItem("adLastClosedTime", now);
+    }
+
+    // --- LOGIKA UTAMA JALANNYA IKLAN ---
+    const lastClosed = localStorage.getItem("adLastClosedTime");
+    const now = new Date().getTime();
+
+    if (!lastClosed) {
+        // Kondisi 1: Jika user BARU PERTAMA KALI buka web, munculkan setelah delay 3 detik
+        setTimeout(showAd, INITIAL_DELAY);
+    } else {
+        // Kondisi 2: Jika user sudah pernah menutup iklan sebelumnya
+        const timePassed = now - parseInt(lastClosed);
+
+        if (timePassed >= COOLDOWN_TIME) {
+            // Jika sudah lewat dari 10/15 menit, langsung munculkan setelah delay 3 detik
+            setTimeout(showAd, INITIAL_DELAY);
+        } else {
+            // Jika BELUM lewat 10/15 menit, hitung sisa waktunya, lalu munculkan secara presisi
+            const remainingTime = COOLDOWN_TIME - timePassed;
+            setTimeout(showAd, remainingTime);
+        }
+    }
+
+    // Tombol close manual
+    closeBtn.addEventListener("click", closeAd);
+
+    // Close manual jika klik area hitam di luar gambar
+    overlay.addEventListener("click", function(e) {
+        if (e.target === overlay) {
+            closeAd();
+        }
+    });
+});
+</script>
     <!-- Logic JavaScript -->
     <script>
         let audioContext = null, analyser = null, audioSource = null, audioBuffer = null, isPlaying = false;
